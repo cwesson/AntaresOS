@@ -1,0 +1,28 @@
+#!/bin/bash
+
+LIST="kernel.bin bootcd.iso"
+FORMAT="%-13s  %-32s  %10s  %-.19s\n"
+CHECKSUMOUT="AntaresOS.md5"
+
+printf "$FORMAT" "Filename" "MD5 Sum" "Size (B)" "Timestamp"
+echo -------------------------------------------------------------------------------
+
+cd bin/
+
+if [ -e $CHECKSUMOUT ] ; then
+	rm $CHECKSUMOUT
+fi
+
+gcc -std=c99 -o ./drunkenbishop ../scripts/drunkenbishop.c
+
+for FILE in $LIST; do
+	MD5=`md5sum $FILE`
+	SUM=`echo $MD5 | cut -d ' ' -f 1`
+	SIZE=`du -b $FILE | cut -f 1`
+	TIME=`stat -c %y $FILE`
+	printf "$FORMAT" $FILE $SUM $SIZE "$TIME"
+	echo $MD5 >> $CHECKSUMOUT
+
+	java -jar ../scripts/Vash.jar -a 1.1 -f $FILE -w 512 -h 512 -o $FILE.vash.png
+	echo $MD5 | ./drunkenbishop
+done

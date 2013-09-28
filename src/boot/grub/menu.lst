@@ -1,0 +1,23 @@
+##
+# @file boot/grub/menu.lst
+# @author Conlan Wesson
+##
+
+# Set timeout to 5 seconds.
+timeout	5
+
+# Set color scheme
+color	green/black black/green
+
+##
+# Menu entries.
+##
+
+# AntaresOS
+title	AntaresOS
+kernel	/boot/kernel.bin
+
+# Memtest86+
+title	Memtest86+
+kernel	/boot/memtest.bin
+
