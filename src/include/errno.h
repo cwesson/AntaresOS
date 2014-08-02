@@ -8,7 +8,7 @@
 #define __INCLUDE_ERRNO_H_
 
 //! Integer type used for indicating errors.
-typedef enum errno{
+enum {
 	EOK = 0,         //!< Not an error.
 	
 	// ISO C required errors.
@@ -96,3 +96,4 @@ typedef enum errno{
 } errno;
 
 #endif /* __INCLUDE_ERRNO_H_ */
+
