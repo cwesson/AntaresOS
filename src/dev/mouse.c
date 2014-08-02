@@ -30,12 +30,12 @@ static void mouse_isr(isr_regs regs){
 		case 0:
 			mouse_byte[0] = inb(0x60);
 			if(mouse_byte[0] & 0x08){
-				mouse_cycle++;
+				++mouse_cycle;
 			}
 			break;
 		case 1:
 			mouse_byte[1] = inb(0x60);
-			mouse_cycle++;
+			++mouse_cycle;
 			break;
 		case 2:
 			mouse_byte[2] = inb(0x60);
@@ -65,14 +65,14 @@ static void mouse_isr(isr_regs regs){
 static void mouse_wait(uint8_t type){
 	uint32_t time_out = 100000;
 	if(type == 0){
-		while(time_out--){
+		while(--time_out){
 			if((inb(0x64) & 1) == 1){
 				return;
 			}
 		}
 		return;
 	}else{
-		while(time_out--){
+		while(--time_out){
 			if((inb(0x64) & 2) == 0){
 				return;
 			}
@@ -102,7 +102,7 @@ static uint8_t mouse_read(){
  * Setup the mouse driver.
  */
 void mouse_init(){
-	uint8_t status;  //unsigned char
+	uint8_t status;
 	
 	//Enable the auxiliary mouse device
 	mouse_wait(1);
@@ -129,3 +129,4 @@ void mouse_init(){
 	//Setup the mouse handler
 	isr_register(IRQ12, &mouse_isr);
 }
+

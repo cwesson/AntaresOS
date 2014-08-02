@@ -4,7 +4,7 @@
 TIMESTAMP := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 
 CC := gcc
-CFLAGS := -Wall -Wextra -Werror -nostdlib -nostartfiles -nodefaultlibs -nostdinc -fno-builtin -std=gnu99 -m32 \
+CFLAGS := -Wall -Wextra -Werror -nostdlib -nostartfiles -nodefaultlibs -nostdinc -fno-builtin -std=gnu11 -m32 \
 	-DTIMESTAMP=\"$(TIMESTAMP)\" -DREVISION=\"NONE\" -I./src/include/
 
 ASM := nasm

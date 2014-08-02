@@ -41,15 +41,15 @@ static unsigned int __putnum_actual(int num, unsigned int base, unsigned int gro
 		if(num < 0){
 			if(neg == PUTNUM_SIGN_NLEAD || neg == PUTNUM_SIGN_PLEAD){
 				putchar('-');
-				depth++;
-				count++;
+				++depth;
+				++count;
 			}
 			num = -num;
 			sign = true;
 		}else if(depth == 0 && neg == PUTNUM_SIGN_PLEAD){
 			putchar('+');
-			depth++;
-				count++;
+			++depth;
+			++count;
 		}
 	}
 	
@@ -64,33 +64,33 @@ static unsigned int __putnum_actual(int num, unsigned int base, unsigned int gro
 			if(sign){
 				if(neg == PUTNUM_SIGN_NEMBED){
 					putchar('-');
-					count++;
+					++count;
 				}
 			}else{
 				if(neg == PUTNUM_SIGN_PEMBED || neg == PUTNUM_SIGN_NEMBED){
 					putchar('+');
-					count++;
+					++count;
 				}
 			}
 		}
 		// Print any padding.
-		for(unsigned int i = length; i > depth+1; i--){
+		for(unsigned int i = length; i > depth+1; --i){
 			if(i == depth+2 && sign && (neg == PUTNUM_SIGN_NEMBED || neg == PUTNUM_SIGN_PEMBED)){
 				putchar('-');
-				count++;
+				++count;
 			}else if(i == depth+2 && !sign && neg == PUTNUM_SIGN_PEMBED){
 				putchar('+');
-				count++;
+				++count;
 			}else{
 				putchar(pad);
-				count++;
+				++count;
 				// Print group and digit seperators in padding.
 				if(group_sep && (i-1) % group_size == 0){
 					putchar(group_sep);
-					count++;
+					++count;
 				}else if(digit_sep){
 					putchar(digit_sep);
-					count++;
+					++count;
 				}
 			}
 		}
@@ -100,14 +100,14 @@ static unsigned int __putnum_actual(int num, unsigned int base, unsigned int gro
 	if(base < 36){
 		if(rem < 10){
 			putchar(rem + '0');
-			count++;
+			++count;
 		}else{
 			if(cap){
 				putchar(rem - 10 + 'A');
-				count++;
+				++count;
 			}else{
 				putchar(rem - 10 + 'a');
-				count++;
+				++count;
 			}
 		}
 	}else{
@@ -119,10 +119,10 @@ static unsigned int __putnum_actual(int num, unsigned int base, unsigned int gro
 	if(depth){
 		if(group_sep && depth % group_size == 0){
 			putchar(group_sep);
-			count++;
+			++count;
 		}else if(digit_sep){
 			putchar(digit_sep);
-			count++;
+			++count;
 		}
 	}
 	
@@ -136,11 +136,11 @@ static unsigned int __putnum_actual(int num, unsigned int base, unsigned int gro
  */
 int puts(const char *str){
 	int count = 0;
-	for(int i = 0; str[i] && i < MAX_LENGTH; i++){
+	for(int i = 0; str[i] && i < MAX_LENGTH; ++i){
 		if(putchar(str[i]) != str[i]){
 			return EOF;
 		}
-		count++;
+		++count;
 	}
 	return count;
 }
@@ -156,12 +156,12 @@ int printf(const char *format, ...){
 	unsigned int count = 0;
 	va_list ap;
 	va_start(ap, format);
-	for(int i = 0; format[i] && i < MAX_LENGTH; i++){
+	for(int i = 0; format[i] && i < MAX_LENGTH; ++i){
 		if(format[i] != '%'){
 			if(putchar(format[i]) != format[i]){
 				return EOF;
 			}
-			count++;
+			++count;
 		}else{
 			bool handled = false;
 			bool left = false;
@@ -172,7 +172,7 @@ int printf(const char *format, ...){
 			unsigned int precision = 0;
 			unsigned int lastcount = count;
 			while(!handled){
-				i++;
+				++i;
 				char type = format[i];
 				if(type == 'p'){
 					int ret = puts("0x");
@@ -187,11 +187,11 @@ int printf(const char *format, ...){
 					if(putchar(format[i]) != format[i]){
 						return EOF;
 					}
-					count++;
+					++count;
 					handled = true;
 				}else if(type == 'c'){
 					putchar((char)(va_arg(ap, int) & 0x000000FF));
-					count++;
+					++count;
 					handled = true;
 				}else if(type == 's'){
 					int ret = puts(va_arg(ap, char*));
@@ -241,12 +241,12 @@ int printf(const char *format, ...){
 				}else if(type == '.'){
 					dot = true;
 				}
-				index++;
+				++index;
 			}
 			if(left && lastcount + width < count){
-				for(unsigned int i = 0; i < lastcount + width; i++){
+				for(unsigned int i = 0; i < lastcount + width; ++i){
 					putchar(' ');
-					count++;
+					++count;
 				}
 			}
 		}
@@ -259,7 +259,7 @@ int printf(const char *format, ...){
  * @param str String to write.
  */
 void perror(const char *str){
-	for(int i = 0; str[i] && i < MAX_LENGTH; i++){
+	for(int i = 0; str[i] && i < MAX_LENGTH; ++i){
 		stderr->swrite(str[i]);
 	}
 }
@@ -339,12 +339,12 @@ int putfloat(double num, uint8_t prec){
 	int count = 0;
 	count += putint((int)num);
 	putchar('.');
-	count++;
+	++count;
 	num -= (int)num;
-	for(int i = 0; i < prec; i++){
+	for(int i = 0; i < prec; ++i){
 		num *= 10;
 		putchar((int)num+'0');
-		count++;
+		++count;
 		num -= (int)num;
 	}
 	return count;
@@ -371,16 +371,17 @@ char *gets(char *str){
 		ch = getchar();
 		if(ch == '\b'){
 			if(loc){
-				loc--;
+				--loc;
 			}
 		}else if(ch == '\t'){
 			// Do nothing, for now.
 		}else if(ch && loc < MAX_LENGTH-1 && ch != '\n'){
 			str[loc] = ch;
-			loc++;
+			++loc;
 		}
 	}
 	putchar('\n');
 	str[loc] = 0;
 	return str;
 }
+

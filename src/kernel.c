@@ -111,7 +111,7 @@ int kmain(const struct multiboot_info *const mbd, unsigned int magic){
 	
 	
 	// heap_init((void*[]){end_kernel, 0}, (void*[]){end_kernel + 536870912, 0});
-	// for(int i = 0; i < 3; i++){
+	// for(int i = 0; i < 3; ++i){
 		// int size = rand()%1024;
 		// if(size < 0){
 			// size = -size;

@@ -90,3 +90,4 @@ void irq_handler(isr_regs regs){
 void isr_register(uint8_t n, isr handler){
 	interrupt_handlers[n] = handler;
 }
+

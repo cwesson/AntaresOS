@@ -60,7 +60,7 @@ int sdt_init(){
 	char *scan = (char*)(bda_desc.bread(BDA_EBDA_BASE) << 4);
 	char *end = scan + 1024;
 	bool found = false;
-	for(int i = 0; i < 2; i++){
+	for(int i = 0; i < 2; ++i){
 		while(scan < end && !found){
 			if(strncmp(scan, "RSD PTR ", 8) == 0){
 				rsdp = (struct rsdp_descriptor*)scan;
@@ -80,7 +80,7 @@ int sdt_init(){
 	
 	// Validate the rev. 1.0 checksum.
 	uint8_t sum = 0;
-	for(int i = 0; i < 20; i++){
+	for(int i = 0; i < 20; ++i){
 		sum += scan[i];
 	}
 	if(sum){
@@ -92,7 +92,7 @@ int sdt_init(){
 	// Check revision and validate the rev. 2.0 checksum.
 	if(rsdp->revision > 0){
 		uint8_t sum = 0;
-		for(int i = 0; i < 34; i++){
+		for(int i = 0; i < 34; ++i){
 			sum += (int)scan[i];
 		}
 		if(sum){
@@ -117,7 +117,7 @@ int sdt_read(unsigned int addr){
 		entries = (rsdt->header.length - sizeof(rsdt->header)) / 4;
 	}
 	
-	for(int i = 0; i < entries; i++){
+	for(int i = 0; i < entries; ++i){
 		sdt_header *head = (sdt_header*)(uint32_t)xsdt->sdt[i];
 		if(xsdt){
 			head = (sdt_header*)(uint32_t)xsdt->sdt[i];
@@ -131,3 +131,4 @@ int sdt_read(unsigned int addr){
 	
 	return 0;
 }
+

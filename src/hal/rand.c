@@ -21,7 +21,7 @@ static bool init = false;      //!< Has the RNG been initialized?
  * Regenerates the pool after using all indexes.
  */
 static void rand_regen(){
-	for(int i = 0; i < POOL_SIZE; i++){
+	for(int i = 0; i < POOL_SIZE; ++i){
 		int y = (pool[i] >> 31) + ((pool[(i+1) % POOL_SIZE]) & 0x7FFFFFFF);
 		pool[i] = pool[(i + (POOL_SIZE*6362)/10000) % POOL_SIZE] ^ (y >> 1);
 		if(y & 0x01){
@@ -37,7 +37,7 @@ static void rand_regen(){
  */
 int rand_write(char seed){
 	pool[0] = (seed*685956421) ^ (seed*567498787) ^ (seed*135768463) ^ (seed*954167527);    // Random prime numbers.
-	for(int i = 1; i < POOL_SIZE; i++){
+	for(int i = 1; i < POOL_SIZE; ++i){
 		pool[i] = 0x6C078965 * (pool[i-1] ^ ((pool[i-1]) >> 30)) + i;
 	}
 	init = true;
@@ -93,3 +93,4 @@ device_descriptor rand_desc = {
 	0, 0,
 	rand_read, rand_write, rand_flush
 };
+

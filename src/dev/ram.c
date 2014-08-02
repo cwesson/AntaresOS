@@ -48,11 +48,11 @@ void ram_dump(uint8_t *addr){
 	uint8_t *end = addr + 256;
 	for(; addr < end; addr+=16){
 		printf("\e[1;37;44m 0x%8X  ", (uint32_t)addr);
-		for(int i = 0; i < 16; i++){
+		for(int i = 0; i < 16; ++i){
 			printf("%2X ", *(addr+i));
 		}
 		puts("  ");
-		for(int i = 0; i < 16; i++){
+		for(int i = 0; i < 16; ++i){
 			if(isprint(*(addr+i))){
 				putchar((char)*(addr+i));
 			}else{
@@ -87,3 +87,4 @@ void ram_init(struct mmap_entry *mmap, uint32_t length, void * begin){
 void *ram_kernel_end(){
 	return ram_heap_start;
 }
+

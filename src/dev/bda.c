@@ -26,7 +26,7 @@ device_descriptor bda_desc = {
  * @param addr The address to read from.
  * @return The value read.
  */
-int bda_read(unsigned int addr){
+int bda_read(bda_port addr){
 	if(addr == BDA_COM1_IOPORT){
 		return *((uint16_t*)BDA_COM1_IOPORT);
 	}else if(addr == BDA_LPT1_IOPORT){
@@ -48,3 +48,4 @@ int bda_read(unsigned int addr){
 	}
 	return EDOM;
 }
+

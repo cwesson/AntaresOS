@@ -38,10 +38,10 @@ const char *const pci_classes[] = {
  */
 void pciscan_run(){
 	uint16_t bus;
-	for(bus = 0; bus < 256; bus++){
+	for(bus = 0; bus < 256; ++bus){
 		uint16_t dev;
 		bool bus_first = true;
-		for(dev = 0; dev < 32; dev++){
+		for(dev = 0; dev < 32; ++dev){
 			uint16_t vendor = pci_read(bus, dev, 0, 0);
 			if(vendor != 0xFFFF){
 				uint16_t device = pci_read(bus, dev, 0, 2);
@@ -59,3 +59,4 @@ void pciscan_run(){
 		}
 	}
 }
+

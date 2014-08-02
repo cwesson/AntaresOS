@@ -32,18 +32,18 @@ void *memmove(void *dest, const void *src, size_t n){
 	if(pdest < psrc){
 		while(n){
 			*pdest = *psrc;
-			pdest++;
-			psrc++;
-			n--;
+			++pdest;
+			++psrc;
+			--n;
 		}
 	}else if(pdest > psrc){
 		pdest = pdest + n - 1;
 		psrc = psrc + n - 1;
 		while(n){
 			*pdest = *psrc;
-			pdest--;
-			psrc--;
-			n--;
+			--pdest;
+			--psrc;
+			--n;
 		}
 	}
 	return dest;
@@ -65,9 +65,9 @@ void *memccpy(void *restrict dest, const void *restrict src, char c, size_t n){
 		while(n && last != c){
 			*pdest = *psrc;
 			last = *pdest;
-			pdest++;
-			psrc++;
-			n--;
+			++pdest;
+			++psrc;
+			--n;
 		}
 	}else if(pdest > psrc){
 		pdest = pdest + n - 1;
@@ -75,15 +75,15 @@ void *memccpy(void *restrict dest, const void *restrict src, char c, size_t n){
 		while(n && last != c){
 			*pdest = *psrc;
 			last = *pdest;
-			pdest--;
-			psrc--;
-			n--;
+			--pdest;
+			--psrc;
+			--n;
 		}
 	}else{
 		while(n && last != c){
 			last = *pdest;
-			pdest++;
-			n--;
+			++pdest;
+			--n;
 		}
 	}
 	if(last == c){
@@ -104,8 +104,8 @@ void *memset(void *dest, char c, size_t n){
 	unsigned char *pdest = dest;
 	while(n){
 		*pdest = c;
-		pdest++;
-		n--;
+		++pdest;
+		--n;
 	}
 	return dest;
 }
@@ -123,8 +123,8 @@ void *memchr(const void *src, char c, size_t n){
 		if(*psrc == c){
 			return (void *)psrc;
 		}
-		psrc++;
-		n--;
+		++psrc;
+		--n;
 	}
 	return NULL;
 }
@@ -143,9 +143,9 @@ int memcmp(const void *s1, const void *s2, size_t n){
 		if(*p1 != *p2){
 			return *p1 - *p2;
 		}
-		p1++;
-		p2++;
-		n--;
+		++p1;
+		++p2;
+		--n;
 	}
 	return 0;
 }
@@ -160,11 +160,11 @@ char *strcat(char *restrict dest, const char *restrict src){
 	unsigned int d = 0;
 	unsigned int s = 0;
 	while(dest[d]){
-		d++;
+		++d;
 	}
 	while(src[s]){
 		dest[d+s] = src[s];
-		s++;
+		++s;
 	}
 	dest[d+s] = '\0';
 	return dest;
@@ -181,8 +181,8 @@ int strcmp(const char *s1, const char *s2){
 		if(*s1 != *s2){
 			return *s1 - *s2;
 		}
-		s1++;
-		s2++;
+		++s1;
+		++s2;
 	}
 	return 0;
 }
@@ -199,9 +199,9 @@ int strncmp(const char *s1, const char *s2, size_t max){
 		if(*s1 != *s2){
 			return *s1 - *s2;
 		}
-		s1++;
-		s2++;
-		max--;
+		++s1;
+		++s2;
+		--max;
 	}
 	return 0;
 }
@@ -218,8 +218,8 @@ char *strcpy(char *restrict dest, const char *restrict src){
 	if(pdest < psrc){
 		while(*psrc){
 			*pdest = *psrc;
-			pdest++;
-			psrc++;
+			++pdest;
+			++psrc;
 		}
 	}else if(pdest > psrc){
 		size_t n = strlen(src);
@@ -227,8 +227,8 @@ char *strcpy(char *restrict dest, const char *restrict src){
 		psrc = psrc + n - 1;
 		while(*psrc){
 			*pdest = *psrc;
-			pdest--;
-			psrc--;
+			--pdest;
+			--psrc;
 		}
 	}
 	return dest;
@@ -242,7 +242,8 @@ char *strcpy(char *restrict dest, const char *restrict src){
 size_t strlen(const char *str){
 	size_t len = 0;
 	while(str[len]){
-		len++;
+		++len;
 	}
 	return len;
 }
+

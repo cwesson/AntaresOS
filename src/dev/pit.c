@@ -28,8 +28,8 @@ static void pit_callback(isr_regs regs){
 	static uint8_t prev_min = 255;
 	(void)regs;
 	
-	tick++;
-	count++;
+	++tick;
+	++count;
 	
 	if(count == ch0_freq){
 		datetime dt;
@@ -97,3 +97,4 @@ void pit_init(uint32_t frequency){
 	outb(PIT_CH0_PORT, lo);
 	outb(PIT_CH0_PORT, hi);
 }
+

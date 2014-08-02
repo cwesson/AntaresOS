@@ -35,8 +35,7 @@ int heap_init(void *start[], void *end[]){
 	}
 	
 	heap = (HEAP_T*)start[0];
-	int i = 0;
-	while(start[i] && end[i]){
+	for(int i = 0; start[i] && end[i]; ++i){
 		HEAP_T *head = (HEAP_T*)start[i];
 		HEAP_T *tail = ((HEAP_T*)end[i] - 1);
 		
@@ -49,8 +48,6 @@ int heap_init(void *start[], void *end[]){
 		// Allocate the first block.
 		head[2] = (HEAP_T)NULL;    // Pointer to the previous allocation block.
 		head[3] = head[1] - HEAP_HEAD_SIZE + 1;    // Size of the allocation block.
-		
-		i++;
 	}
 	
 	return EOK;

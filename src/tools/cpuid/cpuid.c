@@ -52,7 +52,7 @@ char *cpuid_vendor(char *vendor){
 	vend[1] = out.edx;
 	vend[2] = out.ecx;
 	int i;
-	for(i = 0; i < 12; i++){
+	for(i = 0; i < 12; ++i){
 		vendor[i] = ((char*)&(vend))[i];
 	}
 	vendor[12] = '\0';
@@ -82,7 +82,7 @@ char *cpuid_name(char *name){
 	vend[10] = out.ecx;
 	vend[11] = out.edx;
 	int i;
-	for(i = 0; i < 48; i++){
+	for(i = 0; i < 48; ++i){
 		name[i] = ((char*)&(vend))[i];
 	}
 	return name;
@@ -174,3 +174,4 @@ bool cpuid_run(){
 	}
 	return rtn;
 }
+

@@ -150,17 +150,17 @@ void console_mvcursor(int16_t amount){
  */
 static void console_clear(enum clear_amount amount){
 	if(amount == CLEAR_ALL){
-		for(int i = 0; i < VROWS*VCOLS; i++){
+		for(int i = 0; i < VROWS*VCOLS; ++i){
 			vga_desc.bwrite(i, VBLANK);
 			console_setcursor(0, 0);
 		}
 		console_setcursor(0, 0);
 	}else if(amount == CLEAR_BEFORE){
-		for(int i = 0; i < vrow*vcol; i++){
+		for(int i = 0; i < vrow*vcol; ++i){
 			vga_desc.bwrite(i, VBLANK);
 		}
 	}else{
-		for(int i = vrow*vcol; i < 0; i++){
+		for(int i = vrow*vcol; i < 0; ++i){
 			vga_desc.bwrite(i, VBLANK);
 		}
 	}
@@ -172,16 +172,16 @@ static void console_clear(enum clear_amount amount){
  */
 static void console_clearln(enum clear_amount amount){
 	if(amount == CLEAR_ALL){
-		for(int i = 0; i < VCOLS; i++){
+		for(int i = 0; i < VCOLS; ++i){
 			vga_desc.bwrite(VPOS(i, vrow), VBLANK);
 			console_setcursor(0, vrow);
 		}
 	}else if(amount == CLEAR_BEFORE){
-		for(int i = 0; i < vcol; i++){
+		for(int i = 0; i < vcol; ++i){
 			vga_desc.bwrite(VPOS(i, vrow), VBLANK);
 		}
 	}else{
-		for(int i = vcol; i < VCOLS; i++){
+		for(int i = vcol; i < VCOLS; ++i){
 			vga_desc.bwrite(VPOS(i, vrow), VBLANK);
 		}
 	}
@@ -195,19 +195,19 @@ static void console_scroll(int8_t amount){
 	if(amount > 0){
 		int b = 0;
 		int a = 0;
-		for(int i = 0; i <= VPOS(VCOL_MAX, VROW_MAX); i++){
+		for(int i = 0; i <= VPOS(VCOL_MAX, VROW_MAX); ++i){
 			if(i <= VPOS(VCOL_MAX, VROW_MAX-amount)){
 				vga_desc.bwrite(i, vga_desc.bread(i + (VCOLS*amount)));
-				b++;
+				++b;
 			}else{
 				vga_desc.bwrite(i, VBLANK);
-				a++;
+				++a;
 			}
 		}
 		console_setcursor(0, VROW_MAX);
 	}else if(amount < 0){
 		amount = -amount;
-		for(int i = VPOS(VCOL_MAX, VROW_MAX); i >= 0; i--){
+		for(int i = VPOS(VCOL_MAX, VROW_MAX); i >= 0; --i){
 			if(i > VPOS(VCOL_MAX, amount-1)){
 				vga_desc.bwrite(i, vga_desc.bread(i - (VCOLS*amount)));
 			}else{
@@ -339,7 +339,7 @@ static void proc_escape(unsigned char ch){
 			escaped = ESC_NONE;
 		}else if(ch == 'm'){
 			// Set graphics mode
-			for(int i = 0; i <= pos; i++){
+			for(int i = 0; i <= pos; ++i){
 				if(buffer[i] == 0){
 					vbg = (VTEXT & 0xF0) >> 4;
 					vfg = (VTEXT & 0x0F);
@@ -400,7 +400,7 @@ static void proc_escape(unsigned char ch){
 				buffer[pos] = (buffer[pos] * 10) + (ch - '0');
 			}
 		}else if(ch == ';'){
-			pos++;
+			++pos;
 		}else{
 			// Error parsing escape sequence
 			escaped = ESC_NONE;
@@ -411,7 +411,7 @@ static void proc_escape(unsigned char ch){
 	
 	if(escaped == ESC_NONE){
 		// Escape code has ended or errored, clear the buffer.
-		for(int i = 0; (unsigned int)i < sizeof(buffer)/sizeof(unsigned char); i++){
+		for(int i = 0; (unsigned int)i < sizeof(buffer)/sizeof(unsigned char); ++i){
 			buffer[i] = 0;
 		}
 		pos = 0;
@@ -432,7 +432,7 @@ int console_write(char value){
 	}else if(!conceal){
 		if(value == '\n'){
 			vcol = 0;
-			vrow++;
+			++vrow;
 			if(vrow > VROW_MAX){
 				console_scroll(1);
 				vrow = VROW_MAX;
@@ -440,7 +440,7 @@ int console_write(char value){
 			console_setcursor(vcol, vrow);
 		}else if(value == '\t'){
 			int count = TAB_WIDTH - (vcol % TAB_WIDTH);
-			for(int i = 0; i < count; i++){
+			for(int i = 0; i < count; ++i){
 				console_write(' ');
 				if(!vcol){
 					break;
@@ -455,11 +455,11 @@ int console_write(char value){
 				outc = outc | 0x08;
 			}
 			vga_desc.bwrite(VPOS(vcol, vrow), (outc << 8) | value);
-			vcol++;
+			++vcol;
 		}
 		if(vcol > VCOL_MAX){
 			vcol = 0;
-			vrow++;
+			++vrow;
 			if(vrow > VROW_MAX){
 				console_scroll(1);
 				vrow = VROW_MAX;
@@ -467,7 +467,7 @@ int console_write(char value){
 			console_setcursor(vcol, vrow);
 		}
 	}
-	console_desc.write_count++;
+	++(console_desc.write_count);
 	return EOK;
 }
 
@@ -486,7 +486,7 @@ char console_read(){
 		console_write(' ');
 		console_mvcursor(-1);
 	}
-	console_desc.read_count++;
+	++(console_desc.read_count);
 	return ch;
 }
 
@@ -508,3 +508,4 @@ device_descriptor console_desc = {
 	0, 0,
 	console_read, console_write, console_flush
 };
+

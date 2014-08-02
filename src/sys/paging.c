@@ -78,7 +78,7 @@ static void paging_isr(isr_regs regs){
  * Initializing paging directory and tables.
  */
 void paging_init(){
-	for(int i = 0; i < 512; i++){
+	for(int i = 0; i < 512; ++i){
 		pdpt[i] = 0;
 		pdt[i] = 0;
 		pdttemp[i] = 0;
@@ -87,7 +87,7 @@ void paging_init(){
 	
 	// Map the first page table
 	uint64_t address = 0;
-	for(int i = 0; i < 512; i++){
+	for(int i = 0; i < 512; ++i){
 		pt[i] = address | PAGING_FLAG_PRESENT | PAGING_FLAG_RW;
 		address += 0x1000;
 	}
@@ -117,3 +117,4 @@ void paging_init(){
 		"movl %eax, %cr0;"
 	);
 }
+

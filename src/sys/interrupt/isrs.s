@@ -176,3 +176,4 @@ irq_common_stub:
 	add   esp, 8    ; Cleans up the pushed error code and pushed ISR number.
 	sti
 	iret            ; Return from the ISR.
+

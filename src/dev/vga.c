@@ -34,7 +34,7 @@ device_descriptor vga_desc = {
  */
 void vga_init(){
 	ioport = bda_desc.bread(BDA_VIDEO_IOPORT);
-	for(unsigned int i = MIN_ADDR; i <= MAX_ADDR; i++){
+	for(unsigned int i = MIN_ADDR; i <= MAX_ADDR; ++i){
 		videoram[i] = 0x0F00 | ' ';
 	}
 }
@@ -79,3 +79,4 @@ int vga_write(unsigned int addr, int value){
 	vga_desc.write_count += 2;
 	return EOK;
 }
+

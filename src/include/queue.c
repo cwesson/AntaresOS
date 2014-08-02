@@ -32,19 +32,19 @@ queue *new_queue(queue *q, int *data, unsigned int size){
  */
 bool enqueue(queue *q, int val){
 	q->data[q->in] = val;
-	q->in++;
+	++(q->in);
 	if(q->in > q->capacity){
 		q->in = 0;
 	}
 	if(q->size == q->capacity){
 		// An old value was overwritten.
-		q->out++;
+		++(q->out);
 		if(q->out > q->capacity){
 			q->out = 0;
 		}
 		return false;
 	}
-	q->size++;
+	++(q->size);
 	return true;
 }
 
@@ -56,8 +56,8 @@ bool enqueue(queue *q, int val){
 int dequeue(queue *q){
 	if(q->size){
 		int ret = q->data[q->out];
-		q->size--;
-		q->out++;
+		--(q->size);
+		++(q->out);
 		if(q->out > q->capacity){
 			q->out = 0;
 		}
@@ -75,3 +75,4 @@ void clear_queue(queue *q){
 	q->in = 0;
 	q->out = 0;
 }
+
