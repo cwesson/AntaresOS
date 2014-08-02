@@ -13,8 +13,6 @@ if [ -e $CHECKSUMOUT ] ; then
 	rm $CHECKSUMOUT
 fi
 
-gcc -std=c99 -o ./drunkenbishop ../scripts/drunkenbishop.c
-
 for FILE in $LIST; do
 	MD5=`md5sum $FILE`
 	SUM=`echo $MD5 | cut -d ' ' -f 1`
@@ -24,5 +22,5 @@ for FILE in $LIST; do
 	echo $MD5 >> $CHECKSUMOUT
 
 	java -jar ../scripts/Vash.jar -a 1.1 -f $FILE -w 512 -h 512 -o $FILE.vash.png
-	echo $MD5 | ./drunkenbishop
+	echo $MD5 | ../scripts/drunkenbishop.pl
 done
