@@ -117,17 +117,21 @@ extern const unsigned char __CTYPE_MAP_ASCII_[];
  * @param ch The character to convert.
  * @return The lowercase equivalent, or ch if the character is not alphabetic.
  */
-int tolower(int ch);
-
-//! @see int tolower(int)
-#define _tolower(ch) tolower(ch)
+inline int tolower(int ch){
+	return ((isalpha(ch)) ? ((ch) | 0x20) : (ch));
+}
 
 /**
  * Converts a alphabetic character to uppercase.
  * @param ch The character to convert.
  * @return The uppercase equivalent, or ch if the character is not alphabetic.
  */
-int toupper(int ch);
+inline int toupper(int ch){
+	return ((isalpha(ch)) ? ((ch) & ~0x20) : (ch));
+}
+
+//! @see int tolower(int)
+#define _tolower(ch) tolower(ch)
 
 //! @see int toupper(int)
 #define _toupper(ch) toupper(ch)

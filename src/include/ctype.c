@@ -30,21 +30,3 @@ const unsigned char __CTYPE_MAP_ASCII_[] = {
 	/* 7 */ 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x40, 0x40, 0x40, 0x40, 0x80
 };
 
-/**
- * Converts a alphabetic character to lowercase.
- * @param ch The character to convert.
- * @return The lowercase equivalent, or ch if the character is not alphabetic.
- */
-inline int tolower(int ch){
-	return ((isalpha(ch)) ? ((ch) | 0x20) : (ch));
-}
-
-/**
- * Converts a alphabetic character to uppercase.
- * @param ch The character to convert.
- * @return The uppercase equivalent, or ch if the character is not alphabetic.
- */
-inline int toupper(int ch){
-	return ((isalpha(ch)) ? ((ch) & ~0x20) : (ch));
-}
-
