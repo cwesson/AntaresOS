@@ -35,24 +35,26 @@
  * X = P%VCOLS
  */
 
-#define BLACK    0x0
-#define BLUE     0x1
-#define GREEN    0x2
-#define CYAN     0x3
-#define RED      0x4
-#define MAGENTA  0x5
-#define BROWN    0x6
-#define LGRAY    0x7
-#define DGRAY    0x8
-#define LGREY    0x7
-#define DGREY    0x8
-#define LBLUE    0x9
-#define LGREEN   0xA
-#define LCYAN    0xB
-#define LRED     0xC
-#define LMAGENTA 0xD
-#define YELLOW   0xE
-#define WHITE    0xF
+typedef enum {
+	BLACK    = 0x0,
+	BLUE     = 0x1,
+	GREEN    = 0x2,
+	CYAN     = 0x3,
+	RED      = 0x4,
+	MAGENTA  = 0x5,
+	BROWN    = 0x6,
+	LGRAY    = 0x7,
+	DGRAY    = 0x8,
+	LGREY    = 0x7,
+	DGREY    = 0x8,
+	LBLUE    = 0x9,
+	LGREEN   = 0xA,
+	LCYAN    = 0xB,
+	LRED     = 0xC,
+	LMAGENTA = 0xD,
+	YELLOW   = 0xE,
+	WHITE    = 0xF
+} vga_color;
 
 /**
  * Creates a video color code.
@@ -74,9 +76,9 @@ static int8_t vcol = 0;
 //! Current row of the cursor.
 static int8_t vrow = 0;
 //! Current background color.
-static uint8_t vbg = (VTEXT & 0xF0) >> 4;
+static vga_color vbg = (VTEXT & 0xF0) >> 4;
 //! Current foreground color.
-static uint8_t vfg = (VTEXT & 0x0F);
+static vga_color vfg = (VTEXT & 0x0F);
 //! Swap background and foreground.
 static bool reverse = false;
 //! Use bright colors.
