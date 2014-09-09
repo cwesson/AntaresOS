@@ -6,9 +6,9 @@
 # Ignore generated files.
 bin/
 *.o
-isofiles/
 doc/html/
 *.log
 
 # Ignore temporary and backup files.
 *~
+

@@ -22,5 +22,6 @@ for FILE in $LIST; do
 	echo $MD5 >> $CHECKSUMOUT
 
 	java -jar ../scripts/Vash.jar -a 1.1 -f $FILE -w 512 -h 512 -o $FILE.vash.png
-	echo $MD5 | ../scripts/drunkenbishop.pl
+	echo $MD5 | ../scripts/drunkenbishop.pl > $FILE.sum
 done
+

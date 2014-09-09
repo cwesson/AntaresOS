@@ -50,7 +50,7 @@ doc:
 lint:
 	@echo " LINT   "
 	@rm -f lint.log
-	@cppcheck $(LINT) ./src/ 2> >(tee lint.log >&2)
+	@cppcheck $(LINT) ./src/ 2> >(tee lint.log | scripts/lintsum.pl)
 
 .NOTPARALLEL:
 
