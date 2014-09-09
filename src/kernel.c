@@ -15,14 +15,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include "dev/bda.h"
-#include "dev/fadt.h"
 #include "dev/keyboard.h"
 #include "dev/mouse.h"
 #include "dev/pit.h"
 #include "dev/ram.h"
 #include "dev/rtc.h"
-#include "dev/sdt.h"
 #include "dev/vga.h"
+#include "hal/acpi.h"
 #include "hal/console.h"
 #include "sys/interrupt/dt.h"
 #include "sys/paging.h"
@@ -91,19 +90,7 @@ int kmain(const struct multiboot_info *const mbd, unsigned int magic){
 	// Enable interrupts.
 	sti();
 	
-	// Locate RSDT.
-	puts("Locating RSDT\n");
-	int ret = sdt_init();
-	if(ret != EOK){
-		panic("RSDP not found!");
-	}
-	
-	// Locate FADT.
-	puts("Locating FADT\n");
-	ret = fadt_init();
-	if(ret != EOK){
-		panic("FADT not found!");
-	}
+	acpi_init();
 	
 	char *boot_loader_name = (char*)mbd->boot_loader_name;
 	printf("\e[31m%s\n", boot_loader_name);
@@ -150,6 +137,8 @@ int kmain(const struct multiboot_info *const mbd, unsigned int magic){
 			perror("\e[0m\n");
 		}
 	}
+	
+	acpi_shutdown();
 	
 	perror("\e[31;40mHalt");
 	return EXIT_SUCCESS;
