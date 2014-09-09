@@ -1,4 +1,5 @@
 .PHONY: all boot clean realclean doc lint
+SHELL := /bin/bash
 
 # ISO 8601 style date/time
 TIMESTAMP := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
@@ -13,8 +14,7 @@ AFLAGS := -f elf
 ISOFLAGS := -J -R -D -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -boot-info-table -quiet \
 	-input-charset utf-8 -hide boot.catalog -hide-joliet boot.catalog -V "AntaresOS"
 
-LINT := -nolib -I./src/include/ -DTIMESTAMP=\"$(TIMESTAMP)\" -booltype _Bool -booltype bool \
-	+showscan +stats +gnuextensions +trytorecover
+LINT := -q --enable=all -I./src/include/
 
 SOURCES := $(shell find src/ \( ! -regex '.*/\..*' \) -name \*.c -o -name \*.s)
 
@@ -49,7 +49,8 @@ doc:
 
 lint:
 	@echo " LINT   "
-	@find ./ -name *.c | xargs -n 1 splint $(LINT) 2>&1 | tee lint.log
+	@rm -f lint.log
+	@cppcheck $(LINT) ./src/ 2> >(tee lint.log >&2)
 
 .NOTPARALLEL:
 
