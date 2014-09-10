@@ -53,7 +53,7 @@ int kmain(const struct multiboot_info *const mbd, unsigned int magic){
 	
 	if(magic != MULTIBOOT_BOOTLOADER_MAGIC){
 		// Something went wrong with multiboot.
-		printf("\e[31mMagic number incorrect: %p", magic);
+		printf("\e[31mMagic number incorrect: %X", magic);
 		return MULTIBOOT_BOOTLOADER_MAGIC;
 	}
 	

@@ -40,7 +40,7 @@ static void paging_isr(isr_regs regs){
 	int user = regs.err_code & PAGING_FLAG_USER;            // Processor was in user-mode?
 	int reserved = regs.err_code & PAGING_FLAG_WTHROUGH;    // Overwritten CPU-reserved bits of page entry?
 	
-	printf("\e[1;33mPage Fault @ %p ", addr);
+	printf("\e[1;33mPage Fault @ 0x%X ", addr);
 	if(!present){
 		puts("not-present ");
 	}

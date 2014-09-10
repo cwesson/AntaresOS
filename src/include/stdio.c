@@ -211,6 +211,13 @@ int printf(const char *format, ...){
 					}
 					count += putnum(va_arg(ap, int), 10, 3, 0, 0, width, pad, sign, false);
 					handled = true;
+				}else if(type == 'u'){
+					char pad = ' ';
+					if(zero_pad){
+						pad = '0';
+					}
+					count += putnum(va_arg(ap, int), 10, 3, 0, 0, width, pad, PUTNUM_SIGN_NONE, false);
+					handled = true;
 				}else if(type == 'x'){
 					count += putnum(va_arg(ap, int), 16, 4, 0, 0, width, '0', PUTNUM_SIGN_NONE, false);
 					handled = true;

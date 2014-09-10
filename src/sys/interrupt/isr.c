@@ -52,12 +52,12 @@ void isr_handler(isr_regs regs){
 		isr handler = interrupt_handlers[regs.int_no];
 		handler(regs);
 	}else if(regs.int_no != 1){
-		printf("Unhandled ISR:  %d", regs.int_no);
+		printf("Unhandled ISR:  %u", regs.int_no);
 		if(regs.int_no < sizeof(int_labels)/sizeof(char*)){
 			putchar(' ');
 			puts(int_labels[regs.int_no]);
 		}
-		printf("\nError Code:  %d\n", regs.err_code);
+		printf("\nError Code:  %u\n", regs.err_code);
 		ram_dump((uint8_t*)regs.esp);
 		panic("Unhandled ISR");
 	}
@@ -72,7 +72,7 @@ void irq_handler(isr_regs regs){
 		isr handler = interrupt_handlers[regs.int_no];
 		handler(regs);
 	}else{
-		printf("Unhandled IRQ:  %d\n", regs.int_no);
+		printf("Unhandled IRQ:  %u\n", regs.int_no);
 	}
 
 	// Send EOI signal to the PICs.

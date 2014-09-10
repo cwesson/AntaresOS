@@ -17,7 +17,7 @@
  * @param func Function in which the panic occured.
  */
 void __panic_actual(const char *msg, const char *file, uint32_t line, const char *func){
-	printf("\n\e[31mKernel Panic: %s:%d: %s: %s\n", file, line, func, msg);
+	printf("\n\e[31mKernel Panic: %s:%u: %s: %s\n", file, line, func, msg);
 	
 	asm volatile(
 		"hlt;"

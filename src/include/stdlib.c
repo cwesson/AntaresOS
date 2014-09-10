@@ -84,7 +84,7 @@ void *malloc(uint32_t size){
 				block[1] = size | HEAP_BLOCK_USED;    // Mark the block as used.
 				free_count -= size;
 				used += size;
-				printf("Free = %d    Used = %d\n", free_count, used);
+				printf("Free = %u    Used = %u\n", free_count, used);
 				return (void*)(block + HEAP_HEAD_SIZE);
 			}
 			
