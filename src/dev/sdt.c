@@ -118,7 +118,7 @@ int sdt_read(unsigned int addr){
 	}
 	
 	for(int i = 0; i < entries; ++i){
-		sdt_header *head = (sdt_header*)(uint32_t)xsdt->sdt[i];
+		sdt_header *head = 0;
 		if(xsdt){
 			head = (sdt_header*)(uint32_t)xsdt->sdt[i];
 		}else{
