@@ -41,7 +41,7 @@ int heap_init(void *start[], void *end[]){
 		
 		// Create the heap header.
 		head[0] = (HEAP_T)start[i+1];    // Pointer to the next heap block.
-		head[1] = (HEAP_T)((end[i] - start[i]) / HEAP_ALIGN);    // Size of the heap block.
+		head[1] = (HEAP_T)(((uint8_t*)end[i] - (uint8_t*)start[i]) / HEAP_ALIGN);    // Size of the heap block.
 		free_count += head[1];
 		*tail = 0;    // Null Terminate the heap.
 		
