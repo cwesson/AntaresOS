@@ -11,15 +11,17 @@
 #include <stdint.h>
 #include "../sys/interrupt/isr.h"
 
-#define PAGING_FLAG_PRESENT  0x0001
-#define PAGING_FLAG_RW       0x0002
-#define PAGING_FLAG_USER     0x0004
-#define PAGING_FLAG_WTHROUGH 0x0008
-#define PAGING_FLAG_CACHEDIS 0x0010
-#define PAGING_FLAG_ACCESSED 0x0020
-#define PAGING_FLAG_DIRTY    0x0040
-#define PAGING_FLAG_PGESIZE  0x0080
-#define PAGING_FLAG_GLOBAL   0x0100
+enum {
+	PAGING_FLAG_PRESENT  = 0x0001,
+	PAGING_FLAG_RW       = 0x0002,
+	PAGING_FLAG_USER     = 0x0004,
+	PAGING_FLAG_WTHROUGH = 0x0008,
+	PAGING_FLAG_CACHEDIS = 0x0010,
+	PAGING_FLAG_ACCESSED = 0x0020,
+	PAGING_FLAG_DIRTY    = 0x0040,
+	PAGING_FLAG_PGESIZE  = 0x0080,
+	PAGING_FLAG_GLOBAL   = 0x0100
+};
 
 static uint64_t *pdpt    = (uint64_t*)0x1000;    //!< Pointer to the first Page Directory Pointer Table.
 static uint64_t *pdt     = (uint64_t*)0x2000;    //!< Pointer to the first Page Directory Table.

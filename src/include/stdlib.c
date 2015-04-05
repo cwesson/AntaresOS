@@ -12,10 +12,10 @@
 #include "../dev/ram.h"
 #include "../hal/rand.h"
 
-#define HEAP_T uint32_t               //!< Integer type to use for heap allocations.
-#define HEAP_HEAD_SIZE 2              //!< Number of HEAP_T's in the header.
-#define HEAP_ALIGN sizeof(HEAP_T)     //!< Alignment of all heap allocations.
-#define HEAP_BLOCK_USED ((HEAP_T)0x80000000)    //!< Block used flag.
+typedef uint32_t HEAP_T;               //!< Integer type to use for heap allocations.
+const uint8_t HEAP_HEAD_SIZE = 2;              //!< Number of HEAP_T's in the header.
+const uint8_t HEAP_ALIGN = sizeof(HEAP_T);     //!< Alignment of all heap allocations.
+const uint32_t HEAP_BLOCK_USED = ((HEAP_T)0x80000000);    //!< Block used flag.
 
 static HEAP_T *heap = 0;
 
@@ -148,3 +148,4 @@ int rand(){
 void srand(unsigned int val){
 	rand_desc.swrite((char)val);
 }
+

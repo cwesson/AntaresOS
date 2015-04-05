@@ -10,12 +10,14 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define COM_BAUD_MAX 115200
-#define COM_PARITY_NONE  0x00
-#define COM_PARITY_ODD   0x08
-#define COM_PARITY_EVEN  0x18
-#define COM_PARITY_MARK  0x28
-#define COM_PARITY_SPACE 0x38
+const uint32_t COM_BAUD_MAX = 115200u;
+typedef enum {
+	COM_PARITY_NONE  = 0x00,
+	COM_PARITY_ODD   = 0x08,
+	COM_PARITY_EVEN  = 0x18,
+	COM_PARITY_MARK  = 0x28,
+	COM_PARITY_SPACE = 0x38
+} com_parity;
 
 /**
  * Initial setup of COM devices.
@@ -31,7 +33,7 @@ void com_init();
  * @param parity The mode of the parity bit.
  * @return true if the port could be opened.
  */
-bool com_open(uint8_t line, uint16_t baud, uint8_t data, uint8_t stop, uint8_t parity);
+bool com_open(uint8_t line, uint32_t baud, uint8_t data, uint8_t stop, com_parity parity);
 
 /**
  * Closes an open COM port.
@@ -56,3 +58,4 @@ char com_read(uint8_t line);
 bool com_write(uint8_t line, char ch);
 
 #endif
+

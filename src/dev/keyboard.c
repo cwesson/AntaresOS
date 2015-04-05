@@ -11,11 +11,11 @@
 #include <queue.h>
 #include "../sys/interrupt/isr.h"
 
-#define KEYBOARD_DATA_PORT   0x60
-#define KEYBOARD_STATUS_PORT 0x64
-#define KEYBOARD_SETLED_COM  0xED    //!< Command to set LED state.
-#define KEYBOARD_CLEAR_FLAG  0x02    //!< Status port flag for ready state.
-#define KEYBOARD_UP_FLAG     0x80    //!< Flag in scancodes for key up.
+const uint8_t KEYBOARD_DATA_PORT   = 0x60;
+const uint8_t KEYBOARD_STATUS_PORT = 0x64;
+const uint8_t KEYBOARD_SETLED_COM  = 0xED;    //!< Command to set LED state.
+const uint8_t KEYBOARD_CLEAR_FLAG  = 0x02;    //!< Status port flag for ready state.
+enum { KEYBOARD_UP_FLAG = 0x80 };    //!< Flag in scancodes for key up.
 
 //! Map of scan codes to characters.
 static unsigned char keyboard_map[] = {
@@ -97,7 +97,7 @@ static void keyboard_isr(isr_regs regs){
 		case 0x2A:    // Left Shift Down
 			mod_state = mod_state | KEY_LSHIFT_MASK;
 		break;
-		case 0x2A | KEYBOARD_UP_FLAG:    // Left Shift Up
+		case (0x2A | KEYBOARD_UP_FLAG):    // Left Shift Up
 			mod_state = mod_state & ~KEY_LSHIFT_MASK;
 		break;
 		case 0x36:    // Right Shift Down
@@ -147,3 +147,4 @@ void keyboard_init(){
 	new_queue(&buffer, (int*)&buff_data, KEY_BUFFER_SIZE);
 	isr_register(IRQ1, &keyboard_isr);
 }
+

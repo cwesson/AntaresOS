@@ -13,9 +13,9 @@
 	#define NULL ((void*)0)    //!< Null pointer
 #endif
 
-#define EXIT_FAILURE -1    //!< Unsuccessful termination.
+#define EXIT_FAILURE (-1)    //!< Unsuccessful termination.
 
-#define EXIT_SUCCESS  0    //!< Successful termination.
+#define EXIT_SUCCESS  (0)    //!< Successful termination.
 
 /**
  * Initializes the heap.
@@ -51,3 +51,4 @@ int rand();
 void srand(unsigned int val);
 
 #endif /* __INCLUDE_STDLIB_H_ */
+

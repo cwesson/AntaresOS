@@ -12,10 +12,30 @@
 #include "rtc.h"
 #include "../sys/interrupt/isr.h"
 
+#define PIT_CH0_IRQ (IRQ0)
+#define PIT_BEEP_ENABLE (0x03)
+
+enum {
+	PIT_CH0_PORT = 0x40,    //!< PIT channel 0 data port.
+	PIT_CH2_PORT = 0x42,    //!< PIT channel 2 data port.
+	PIT_MODE_REG = 0x43,    //!< PIT mode/command port.
+	PIT_BEEP_REG = 0x61     //!< PC Speaker register.
+};
+enum {
+	PIT_FLAG_CH0   = 0x00,    //!< Select channel 0.
+	PIT_FLAG_CH2   = 0x80,    //!< Select channel 2.
+	PIT_FLAG_HILO  = 0x30,    //!< Use high/low access mode.
+	PIT_FLAG_MODE2 = 0x04,    //!< Rate generator.
+	PIT_FLAG_MODE3 = 0x06,    //!< Square wave generator.
+	PIT_FLAG_BIN   = 0x00     //!< 16bit binary mode.
+};
+
+const float PIT_CLOCK_FREQ = 1193180;
+
 /**
  * Frequency of PIT Channel 0.
  */
-static uint8_t ch0_freq = 0;
+static uint32_t ch0_freq = 0;
 static float resolution = 0;
 
 /**
@@ -49,7 +69,7 @@ static void pit_callback(isr_regs regs){
  */
 void pit_tone(uint32_t frequency){
 	// Calculate the clock divisor.
-	uint32_t divisor = (int)(((((float)PIT_CLOCK_FREQ / (float)frequency)*10.0)+0.5)/10.0);
+	uint32_t divisor = (int)((((PIT_CLOCK_FREQ / (float)frequency)*10.0)+0.5)/10.0);
 	
 	// Divisor has to be sent byte-wise, so split here into upper/lower bytes.
 	uint8_t lo = (uint8_t)(divisor & 0xFF);
@@ -82,10 +102,10 @@ void pit_init(uint32_t frequency){
 	isr_register(PIT_CH0_IRQ, &pit_callback);
 	
 	// Calculate the clock divisor.
-	uint32_t divisor = (int)(((((float)PIT_CLOCK_FREQ / (float)frequency)*10.0)+0.5)/10.0);
+	uint32_t divisor = (int)((((PIT_CLOCK_FREQ / (float)frequency)*10.0)+0.5)/10.0);
 	
 	// Calulate actual tick resolution in microseconds
-	resolution = (1.0 / ((float)PIT_CLOCK_FREQ / (float)divisor)) * 1000000.0;
+	resolution = (1.0 / (PIT_CLOCK_FREQ / (float)divisor)) * 1000000.0;
 	
 	// Divisor has to be sent byte-wise, so split here into upper/lower bytes.
 	uint8_t lo = (uint8_t)(divisor & 0xFF);

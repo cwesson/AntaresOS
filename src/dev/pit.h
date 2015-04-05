@@ -4,25 +4,10 @@
  * @author Conlan Wesson
  */
 
-#ifndef DEV_PIT_H
-#define DEV_PIT_H
+#ifndef __DEV_PIT_H_
+#define __DEV_PIT_H_
 
-#include "../sys/interrupt/isr.h"
-
-#define PIT_CH0_PORT 0x40
-#define PIT_CH2_PORT 0x42
-#define PIT_CH0_IRQ IRQ0
-#define PIT_MODE_REG 0x43
-#define PIT_BEEP_REG 0x61
-#define PIT_BEEP_ENABLE 0x03
-#define PIT_FLAG_CH0 0x00
-#define PIT_FLAG_CH2 0x80
-#define PIT_FLAG_HILO 0x30
-#define PIT_FLAG_MODE2 0x04
-#define PIT_FLAG_MODE3 0x06
-#define PIT_FLAG_BIN 0x00
-
-#define PIT_CLOCK_FREQ 1193180
+#include <stdint.h>
 
 /**
  * Plays a tone over the PC speaker.
@@ -41,4 +26,5 @@ void pit_nosound();
  */
 void pit_init(uint32_t frequency);
 
-#endif
+#endif /* __DEV_PT_H_ */ 
+

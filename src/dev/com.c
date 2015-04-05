@@ -78,7 +78,7 @@ void com_init(){
  * @param parity The mode of the parity bit.
  * @return true if the port could be opened.
  */
-bool com_open(uint8_t line, uint16_t baud, uint8_t data, uint8_t stop, uint8_t parity){
+bool com_open(uint8_t line, uint32_t baud, uint8_t data, uint8_t stop, com_parity parity){
 	// Determine the rate divisor.
 	uint16_t divisor = baud / COM_BAUD_MAX;
 	uint8_t divlo = (divisor & 0x0F);
@@ -179,3 +179,4 @@ bool com_write(uint8_t line, char ch){
 	}
 	return false;
 }
+

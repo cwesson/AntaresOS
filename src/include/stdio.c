@@ -14,7 +14,9 @@
 #include "../dev/vga.h"
 #include "../dev/keyboard.h"
 
-#define MAX_LENGTH 255    //!< Maximum string length.
+enum {
+	MAX_LENGTH = 255    //!< Maximum string length.
+};
 
 device_descriptor *stdout = &console_desc;
 device_descriptor *stderr = &console_desc;
@@ -216,13 +218,13 @@ int printf(const char *format, ...){
 					if(zero_pad){
 						pad = '0';
 					}
-					count += putnum(va_arg(ap, int), 10, 3, 0, 0, width, pad, PUTNUM_SIGN_NONE, false);
+					count += putnum(va_arg(ap, unsigned int), 10, 3, 0, 0, width, pad, PUTNUM_SIGN_NONE, false);
 					handled = true;
 				}else if(type == 'x'){
-					count += putnum(va_arg(ap, int), 16, 4, 0, 0, width, '0', PUTNUM_SIGN_NONE, false);
+					count += putnum(va_arg(ap, unsigned int), 16, 4, 0, 0, width, '0', PUTNUM_SIGN_NONE, false);
 					handled = true;
 				}else if(type == 'X'){
-					count += putnum(va_arg(ap, int), 16, 4, 0, 0, width, '0', PUTNUM_SIGN_NONE, true);
+					count += putnum(va_arg(ap, unsigned int), 16, 4, 0, 0, width, '0', PUTNUM_SIGN_NONE, true);
 					handled = true;
 				}else if(type == 'o'){
 					count += putnum(va_arg(ap, int), 8, 3, 0, 0, width, '0', PUTNUM_SIGN_NONE, false);

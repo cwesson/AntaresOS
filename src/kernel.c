@@ -79,8 +79,8 @@ int kmain(const struct multiboot_info *const mbd, unsigned int magic){
 	// Scan memory map.
 	ram_init((struct mmap_entry*)mbd->mmap_addr, mbd->mmap_length, end_kernel);
 	
-	// Set the interval timer to 100,000Hz.
-	pit_init(100000);
+	// Set the interval timer to 10,000Hz.
+	pit_init(10000);
 	rtc_init();
 	
 	// Initialize the mouse and keyboard.
