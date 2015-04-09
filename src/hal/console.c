@@ -12,20 +12,26 @@
 #include "../dev/keyboard.h"
 #include "../dev/vga.h"
 
-#define VROWS 25
-#define VROW_MAX (VROWS-1)
-#define VCOLS 80
-#define VCOL_MAX (VCOLS-1)
-
-#define TAB_WIDTH 4
+enum {
+	VROWS    = 25,
+	VROW_MAX = (VROWS-1),
+	VCOLS    = 80,
+	VCOL_MAX = (VCOLS-1)
+};
+enum {
+	TAB_WIDTH  =   4,    //!< Number of spaces to print for tab character/
+	MAX_LENGTH = 255     //!< Maximum string length.
+};
 
 /**
  * Calculates the offset of a text cell.
- * @param X The column coordinate.
- * @param Y The row coordinate.
+ * @param x The column coordinate.
+ * @param y The row coordinate.
  * @return The VRAM offset of the cell.
  */
-#define VPOS(X, Y)  (((Y)*(VCOLS))+(X))
+static inline int16_t VPOS(int8_t x, int8_t y){
+	return (y * VCOLS) + x;
+}
 /* (Y*VCOLS)+X = P
  * Y*VCOLS = P-X
  * Y = (P-X)/VCOLS
@@ -68,8 +74,6 @@ typedef enum {
 #define VERROR COLOR(BLACK, RED)
 #define VDEBUG COLOR(YELLOW, BLACK)
 #define VBLANK (((VTEXT)<<8) | ' ')
-
-#define MAX_LENGTH 255    //!< Maximum string length.
 
 //! Current column of the cursor.
 static int8_t vcol = 0;
@@ -233,179 +237,226 @@ static void proc_escape(unsigned char ch){
 	if(escaped == ESC_START && ch == '['){
 		escaped = ESC_READ;
 	}else if(escaped == ESC_READ){
-		if(ch == 'A'){
-			// Cursor up
-			if(buffer[0] < 0){
-				buffer[0] = 1;
-			}
-			console_setcursor(vcol, vrow - buffer[0]);
-			escaped = ESC_NONE;
-		}else if(ch == 'B'){
-			// Cursor down
-			if(buffer[0] < 0){
-				buffer[0] = 1;
-			}
-			console_setcursor(vcol, vrow + buffer[0]);
-			escaped = ESC_NONE;
-		}else if(ch == 'C'){
-			// Cursor right
-			if(buffer[0] < 0){
-				buffer[0] = 1;
-			}
-			console_setcursor(vcol + buffer[0], vrow);
-			escaped = ESC_NONE;
-		}else if(ch == 'D'){
-			// Cursor left
-			if(buffer[0] < 0){
-				buffer[0] = 1;
-			}
-			console_setcursor(vcol - buffer[0], vrow);
-			escaped = ESC_NONE;
-		}else if(ch == 'E'){
-			// Cursor next line
-			if(buffer[0] < 0){
-				buffer[0] = 1;
-			}
-			console_setcursor(0, vrow + buffer[0]);
-			escaped = ESC_NONE;
-		}else if(ch == 'F'){
-			// Cursor previous line
-			if(buffer[0] < 0){
-				buffer[0] = 1;
-			}
-			console_setcursor(0, vrow - buffer[0]);
-			escaped = ESC_NONE;
-		}else if(ch == 'G'){
-			// Cursor horizontal absolute
-			console_setcursor(buffer[0], vrow);
-			escaped = ESC_NONE;
-		}else if(ch == 'H' || ch == 'f'){
-			// Set cursor position
-			if(buffer[0] <= 0){
-				buffer[0] = 1;
-			}
-			if(buffer[1] <= 0){
-				buffer[1] = 1;
-			}
-			console_setcursor(buffer[1]-1, buffer[0]-1);
-			escaped = ESC_NONE;
-		}else if(ch == 'J'){
-			// Erase Display
-			if(buffer[0] == 2){
-				console_clear(CLEAR_ALL);
-			}else if(buffer[0] == 1){
-				console_clear(CLEAR_BEFORE);
-			}else{
-				console_clear(CLEAR_AFTER);
-			}
-			escaped = ESC_NONE;
-		}else if(ch == 'K'){
-			// Erase line
-			if(buffer[0] == 2){
-				console_clearln(CLEAR_ALL);
-			}else if(buffer[0] == 1){
-				console_clearln(CLEAR_BEFORE);
-			}else{
-				console_clearln(CLEAR_AFTER);
-			}
-			escaped = ESC_NONE;
-		}else if(ch == 'S'){
-			// Scroll up
-			if(buffer[0] < 0){
-				buffer[0] = 1;
-			}
-			console_scroll(buffer[0]);
-			escaped = ESC_NONE;
-		}else if(ch == 'T'){
-			// Scroll down
-			if(buffer[0] < 0){
-				buffer[0] = 1;
-			}
-			console_scroll(-buffer[0]);
-			escaped = ESC_NONE;
-		}else if(ch == 's'){
-			// Save cursor position
-			saved_col = vcol;
-			saved_row = vrow;
-			escaped = ESC_NONE;
-		}else if(ch == 'u'){
-			// Restore cursor position
-			if(saved_col >= 0){
-				vcol = saved_col;
-				saved_col = -1;
-			}
-			if(saved_row >= 0){
-				vrow = saved_row;
-				saved_row = -1;
-			}
-			escaped = ESC_NONE;
-		}else if(ch == 'm'){
-			// Set graphics mode
-			for(int i = 0; i <= pos; ++i){
-				if(buffer[i] == 0){
-					vbg = (VTEXT & 0xF0) >> 4;
-					vfg = (VTEXT & 0x0F);
-					reverse = false;
-					bright = false;
-					conceal = false;
-				}else if(buffer[i] == 1){
-					bright = true;
-				}else if(buffer[i] == 2){
-					bright = false;
-				}else if(buffer[i] == 7){
-					reverse = true;
-				}else if(buffer[i] == 8){
-					conceal = true;
-				}else if(buffer[i] == 27){
-					reverse = false;
-				}else if(buffer[i] == 28){
-					conceal = false;
-				}else if(buffer[i] == 30){
-					vfg = BLACK;
-				}else if(buffer[i] == 31){
-					vfg = RED;
-				}else if(buffer[i] == 32){
-					vfg = GREEN;
-				}else if(buffer[i] == 33){
-					vfg = BROWN;
-				}else if(buffer[i] == 34){
-					vfg = BLUE;
-				}else if(buffer[i] == 35){
-					vfg = MAGENTA;
-				}else if(buffer[i] == 36){
-					vfg = CYAN;
-				}else if(buffer[i] == 37){
-					vfg = LGRAY;
-				}else if(buffer[i] == 40){
-					vbg = BLACK;
-				}else if(buffer[i] == 41){
-					vbg = RED;
-				}else if(buffer[i] == 42){
-					vbg = GREEN;
-				}else if(buffer[i] == 43){
-					vbg = BROWN;
-				}else if(buffer[i] == 44){
-					vbg = BLUE;
-				}else if(buffer[i] == 45){
-					vbg = MAGENTA;
-				}else if(buffer[i] == 46){
-					vbg = CYAN;
-				}else if(buffer[i] == 47){
-					vbg = LGRAY;
+		switch(ch){
+			case 'A':
+				// Cursor up
+				if(buffer[0] < 0){
+					buffer[0] = 1;
 				}
-			}
-			escaped = ESC_NONE;
-		}else if(isdigit(ch)){
-			if(buffer[pos] < 0){
-				buffer[pos] = ch - '0';
-			}else{
-				buffer[pos] = (buffer[pos] * 10) + (ch - '0');
-			}
-		}else if(ch == ';'){
-			++pos;
-		}else{
-			// Error parsing escape sequence
-			escaped = ESC_NONE;
+				console_setcursor(vcol, vrow - buffer[0]);
+				escaped = ESC_NONE;
+			break;
+			case 'B':
+				// Cursor down
+				if(buffer[0] < 0){
+					buffer[0] = 1;
+				}
+				console_setcursor(vcol, vrow + buffer[0]);
+				escaped = ESC_NONE;
+			break;
+			case 'C':
+				// Cursor right
+				if(buffer[0] < 0){
+					buffer[0] = 1;
+				}
+				console_setcursor(vcol + buffer[0], vrow);
+				escaped = ESC_NONE;
+			break;
+			case 'D':
+				// Cursor left
+				if(buffer[0] < 0){
+					buffer[0] = 1;
+				}
+				console_setcursor(vcol - buffer[0], vrow);
+				escaped = ESC_NONE;
+			break;
+			case 'E':
+				// Cursor next line
+				if(buffer[0] < 0){
+					buffer[0] = 1;
+				}
+				console_setcursor(0, vrow + buffer[0]);
+				escaped = ESC_NONE;
+			break;
+			case 'F':
+				// Cursor previous line
+				if(buffer[0] < 0){
+					buffer[0] = 1;
+				}
+				console_setcursor(0, vrow - buffer[0]);
+				escaped = ESC_NONE;
+			break;
+			case 'G':
+				// Cursor horizontal absolute
+				console_setcursor(buffer[0], vrow);
+				escaped = ESC_NONE;
+			break;
+			case 'H':
+			case 'f':
+				// Set cursor position
+				if(buffer[0] <= 0){
+					buffer[0] = 1;
+				}
+				if(buffer[1] <= 0){
+					buffer[1] = 1;
+				}
+				console_setcursor(buffer[1]-1, buffer[0]-1);
+				escaped = ESC_NONE;
+			break;
+			case 'J':
+				// Erase Display
+				if(buffer[0] == 2){
+					console_clear(CLEAR_ALL);
+				}else if(buffer[0] == 1){
+					console_clear(CLEAR_BEFORE);
+				}else{
+					console_clear(CLEAR_AFTER);
+				}
+				escaped = ESC_NONE;
+			break;
+			case 'K':
+				// Erase line
+				if(buffer[0] == 2){
+					console_clearln(CLEAR_ALL);
+				}else if(buffer[0] == 1){
+					console_clearln(CLEAR_BEFORE);
+				}else{
+					console_clearln(CLEAR_AFTER);
+				}
+				escaped = ESC_NONE;
+			break;
+			case 'S':
+				// Scroll up
+				if(buffer[0] < 0){
+					buffer[0] = 1;
+				}
+				console_scroll(buffer[0]);
+				escaped = ESC_NONE;
+			break;
+			case 'T':
+				// Scroll down
+				if(buffer[0] < 0){
+					buffer[0] = 1;
+				}
+				console_scroll(-buffer[0]);
+				escaped = ESC_NONE;
+			break;
+			case 's':
+				// Save cursor position
+				saved_col = vcol;
+				saved_row = vrow;
+				escaped = ESC_NONE;
+			break;
+			case 'u':
+				// Restore cursor position
+				if(saved_col >= 0){
+					vcol = saved_col;
+					saved_col = -1;
+				}
+				if(saved_row >= 0){
+					vrow = saved_row;
+					saved_row = -1;
+				}
+				escaped = ESC_NONE;
+			break;
+			case 'm':
+				// Set graphics mode
+				for(int i = 0; i <= pos; ++i){
+					switch(buffer[i]){
+						case 0:
+							vbg = (VTEXT & 0xF0) >> 4;
+							vfg = (VTEXT & 0x0F);
+							reverse = false;
+							bright = false;
+							conceal = false;
+						break;
+						case 1:
+							bright = true;
+						break;
+						case 2:
+							bright = false;
+						break;
+						case 7:
+							reverse = true;
+						break;
+						case 8:
+							conceal = true;
+						break;
+						case 27:
+							reverse = false;
+						break;
+						case 28:
+							conceal = false;
+						break;
+						case 30:
+							vfg = BLACK;
+						break;
+						case 31:
+							vfg = RED;
+						break;
+						case 32:
+							vfg = GREEN;
+						break;
+						case 33:
+							vfg = BROWN;
+						break;
+						case 34:
+							vfg = BLUE;
+						break;
+						case 35:
+							vfg = MAGENTA;
+						break;
+						case 36:
+							vfg = CYAN;
+						break;
+						case 37:
+							vfg = LGRAY;
+						break;
+						case 40:
+							vbg = BLACK;
+						break;
+						case 41:
+							vbg = RED;
+						break;
+						case 42:
+							vbg = GREEN;
+						break;
+						case 43:
+							vbg = BROWN;
+						break;
+						case 44:
+							vbg = BLUE;
+						break;
+						case 45:
+							vbg = MAGENTA;
+						break;
+						case 46:
+							vbg = CYAN;
+						break;
+						case 47:
+							vbg = LGRAY;
+						break;
+						default:
+						break;
+					}
+				}
+				escaped = ESC_NONE;
+			break;
+			case ';':
+				++pos;
+			break;
+			default:
+				if(isdigit(ch)){
+					if(buffer[pos] < 0){
+						buffer[pos] = ch - '0';
+					}else{
+						buffer[pos] = (buffer[pos] * 10) + (ch - '0');
+					}
+				}else{
+					// Error parsing escape sequence
+					escaped = ESC_NONE;
+				}
+			break;
 		}
 	}else{
 		escaped = ESC_NONE;

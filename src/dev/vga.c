@@ -11,13 +11,27 @@
 #include <stdint.h>
 #include "bda.h"
 
-#define MIN_ADDR 0x00000000u    //!< Minimum supported address.
-#define MAX_ADDR 0x000007D1u    //!< Maximum supported address.  (80*25) + 1    (1 for special addresses).
-#define CURSOR_LO_COMMAND 0x0F    //!< Command to write low byte to I/O port
-#define CURSOR_HI_COMMAND 0x0E    //!< Command to write high byte to I/O port
+enum {
+	MIN_ADDR = 0x00000000u,   //!< Minimum supported address.
+	MAX_ADDR = 0x000007D1u    //!< Maximum supported address.  (80*25) + 1    (1 for special addresses).
+};
+enum {
+	CURSOR_LO_COMMAND = 0x0F,   //!< Command to write low byte to I/O port
+	CURSOR_HI_COMMAND = 0x0E    //!< Command to write high byte to I/O port
+};
 
-static volatile uint16_t *videoram = (uint16_t *)0xB8000;    //!< Video output buffer.
-static uint16_t ioport = 0;                                //!< Video IOport base address from BDA.
+static volatile struct {
+	union {
+		uint16_t cell;
+		struct {
+			uint8_t asc;
+			uint8_t fg:4;
+			uint8_t bg:4;
+		};
+	} character[2000];
+} *videoram = (void*)0xB8000;    //!< Video output buffer.
+
+static uint16_t ioport = 0;    //!< Video IOport base address from BDA.
 
 //! Video out device descriptor.
 device_descriptor vga_desc = {
@@ -35,7 +49,9 @@ device_descriptor vga_desc = {
 void vga_init(){
 	ioport = bda_desc.bread(BDA_VIDEO_IOPORT);
 	for(unsigned int i = MIN_ADDR; i <= MAX_ADDR; ++i){
-		videoram[i] = 0x0F00 | ' ';
+		videoram->character[i].bg = 0x0;
+		videoram->character[i].fg = 0xF;
+		videoram->character[i].asc = ' ';
 	}
 }
 
@@ -49,7 +65,7 @@ int vga_read(unsigned int addr){
 		return 0;
 	}else if(addr <= MAX_ADDR){
 		vga_desc.read_count += 2;
-		return videoram[addr];
+		return videoram->character[addr].cell;
 	}
 	return 0;
 }
@@ -72,7 +88,7 @@ int vga_write(unsigned int addr, int value){
 		outb(ioport, 0x0E);
 		outb(ioport+1, (uint8_t)((((uint16_t)value) >> 8) & 0xFF));
 	}else if(addr <= MAX_ADDR){
-		videoram[addr] = value;
+		videoram->character[addr].cell = value;
 	}else{
 		return EDOM;
 	}
