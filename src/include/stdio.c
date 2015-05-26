@@ -253,7 +253,7 @@ int printf(const char *format, ...){
 				++index;
 			}
 			if(left && lastcount + width < count){
-				for(unsigned int i = 0; i < lastcount + width; ++i){
+				for(unsigned int s = 0; s < lastcount + width; ++s){
 					putchar(' ');
 					++count;
 				}

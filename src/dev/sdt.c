@@ -91,7 +91,7 @@ int sdt_init(){
 	
 	// Check revision and validate the rev. 2.0 checksum.
 	if(rsdp->revision > 0){
-		uint8_t sum = 0;
+		sum = 0;
 		for(int i = 0; i < 34; ++i){
 			sum += (int)scan[i];
 		}

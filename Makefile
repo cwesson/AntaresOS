@@ -5,7 +5,10 @@ SHELL := /bin/bash
 TIMESTAMP := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 
 CC := gcc
-CFLAGS := -Wall -Wextra -Werror -nostdlib -nostartfiles -nodefaultlibs -nostdinc -fno-builtin -std=gnu11 -m32 \
+CWARN := -Wall -Wextra -Wunused -Werror -Wformat -Wswitch-default -Wswitch-enum -Wuninitialized \
+	-Wshadow -Wpointer-arith -Wcast-align -Wdate-time -Wlogical-op -Wredundant-decls \
+	-Wnested-externs -Winline -Wvolatile-register-var -Woverlength-strings
+CFLAGS := $(CWARN) -nostdlib -nostartfiles -nodefaultlibs -nostdinc -fno-builtin -std=gnu11 -m32 \
 	-DTIMESTAMP=\"$(TIMESTAMP)\" -DREVISION=\"NONE\" -I./src/include/
 
 ASM := nasm

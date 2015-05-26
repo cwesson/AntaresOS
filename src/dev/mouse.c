@@ -59,6 +59,9 @@ static void mouse_isr(isr_regs regs){
 				}
 			}
 			break;
+		default:
+			mouse_cycle = 0;
+			break;
 	}
 }
 
