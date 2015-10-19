@@ -18,12 +18,9 @@ AFLAGS := -f elf
 ISOFLAGS := -J -R -D -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -boot-info-table -quiet \
 	-input-charset utf-8 -hide boot.catalog -hide-joliet boot.catalog -V "AntaresOS"
 
-LINT := -q --enable=all -I./src/include/
+LINT := -q --enable=all -I./src/include/ -I./src/
 
 SOURCES := $(shell find src/ \( ! -regex '.*/\..*' \) -name \*.c -o -name \*.s)
-
-INCLUDE := $(shell find src/ \( ! -regex '.*/\..*' \) \( ! -regex '.*/include.*' \) -type d)
-CFLAGS += $(addprefix -Iquote,$(INCLUDE))
 
 BINS := $(addsuffix .o,$(patsubst src/%,bin/%,$(SOURCES)))
 KERNEL := bin/kernel.bin
