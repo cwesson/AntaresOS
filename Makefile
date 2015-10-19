@@ -3,13 +3,14 @@ SHELL := /bin/bash
 
 # ISO 8601 style date/time
 TIMESTAMP := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
+REVISION := $(shell git rev-parse --short HEAD)$(if $(shell git diff --exit-code),"M",)
 
 CC := gcc
 CWARN := -Wall -Wextra -Wunused -Werror -Wformat -Wswitch-default -Wswitch-enum -Wuninitialized \
 	-Wshadow -Wpointer-arith -Wcast-align -Wdate-time -Wlogical-op -Wredundant-decls \
 	-Wnested-externs -Winline -Wvolatile-register-var -Woverlength-strings
 CFLAGS := $(CWARN) -nostdlib -nostartfiles -nodefaultlibs -nostdinc -fno-builtin -std=gnu11 -m32 \
-	-DTIMESTAMP=\"$(TIMESTAMP)\" -DREVISION=\"NONE\" -I./src/include/ -iquote./src/
+	-DTIMESTAMP=\"$(TIMESTAMP)\" -DREVISION=\"$(REVISION)\" -I./src/include/ -iquote./src/
 
 ASM := nasm
 AFLAGS := -f elf
