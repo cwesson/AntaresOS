@@ -4,10 +4,8 @@
  * @author Conlan Wesson
  */
 
-#ifndef TOOLS_PCISCAN_PCISCAN_H
-#define TOOLS_PCISCAN_PCISCAN_H
-
-#include "../../dev/pci.h"
+#ifndef __TOOLS_PCISCAN_PCISCAN_H_
+#define __TOOLS_PCISCAN_PCISCAN_H_
 
 /**
  * Scans the PCI bus for devices and prints info about each.
@@ -15,3 +13,4 @@
 void pciscan_run();
 
 #endif
+

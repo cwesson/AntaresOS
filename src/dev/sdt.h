@@ -7,7 +7,7 @@
 #ifndef __INCLUDE_SDT_H_
 #define __INCLUDE_SDT_H_
 
-#include "../hal/device.h"
+#include "hal/device.h"
 
 typedef struct sdt_header{
 	char signature[4];
@@ -38,3 +38,4 @@ int sdt_init();
 int sdt_read(unsigned int);
 
 #endif
+

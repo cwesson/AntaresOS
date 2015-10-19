@@ -9,7 +9,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-#include "../../dev/rtc.h"
+#include "dev/rtc.h"
 
 //! Array of full month names.
 const char *date_months[] = {
@@ -73,3 +73,4 @@ uint8_t date_day_of_week(uint16_t year, uint8_t month, uint8_t day){
 	int m = month + 12*a - 2;
 	return (day + y + y/4 - y/100 + y/400 + (31*m/12)) % 7;
 }
+

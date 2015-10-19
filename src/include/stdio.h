@@ -8,8 +8,7 @@
 #define __INCLUDE_STDIO_H_
 
 #include <stdint.h>
-#include "../hal/console.h"
-#include "../hal/device.h"
+#include "hal/device.h"
 
 #define EOF  (-1)    //!< End-of-File indicator.
 
@@ -125,3 +124,4 @@ unsigned char getchar();
 char *gets(char *);
 
 #endif
+

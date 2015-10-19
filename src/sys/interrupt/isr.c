@@ -10,7 +10,7 @@
 #include <kernel/panic.h>
 #include <stdint.h>
 #include <stdio.h>
-#include "../dev/ram.h"
+#include "dev/ram.h"
 
 #define PIC_EOI 0x20    //!< End-of-Interrupt command
 

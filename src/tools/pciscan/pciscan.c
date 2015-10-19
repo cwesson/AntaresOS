@@ -9,7 +9,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-#include "../../dev/pci.h"
+#include "dev/pci.h"
 
 //! Array of PCI device class names.
 const char *const pci_classes[] = {

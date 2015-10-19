@@ -9,8 +9,8 @@
 #include <stdio.h>
 #include <ctype.h>
 #include "device.h"
-#include "../dev/keyboard.h"
-#include "../dev/vga.h"
+#include "dev/keyboard.h"
+#include "dev/vga.h"
 
 enum {
 	VROWS    = 25,

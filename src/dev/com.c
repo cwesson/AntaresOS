@@ -11,7 +11,7 @@
 #include <queue.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include "../sys/interrupt/isr.h"
+#include "sys/interrupt/isr.h"
 
 #define COM_PORT_1 0x03F8    //!< I/O port for COM1.
 #define COM_PORT_2 0x02F8    //!< I/O port for COM2.

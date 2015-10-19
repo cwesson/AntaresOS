@@ -8,7 +8,7 @@
 
 #include <kernel/ioport.h>
 #include <stdint.h>
-#include "../sys/interrupt/isr.h"
+#include "sys/interrupt/isr.h"
 
 #define ATA_PRI_BASE 0x1F0
 #define ATA_SEC_BASE 0x170

@@ -8,7 +8,6 @@
 #define __DEV_RTC_H_
 
 #include <stdint.h>
-#include "../sys/interrupt/isr.h"
 
 enum {
 	RTC_REG_STATA   = 0x0A,

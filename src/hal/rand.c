@@ -9,7 +9,7 @@
 #include <errno.h>
 #include <stdbool.h>
 #include "device.h"
-#include "../dev/rtc.h"
+#include "dev/rtc.h"
 
 #define POOL_SIZE 624
 

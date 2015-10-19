@@ -11,8 +11,9 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include "../dev/vga.h"
-#include "../dev/keyboard.h"
+#include "hal/console.h"
+#include "dev/vga.h"
+#include "dev/keyboard.h"
 
 enum {
 	MAX_LENGTH = 255    //!< Maximum string length.

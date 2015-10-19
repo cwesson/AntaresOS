@@ -9,7 +9,7 @@
 #include <kernel/ioport.h>
 #include <stdint.h>
 #include <queue.h>
-#include "../sys/interrupt/isr.h"
+#include "sys/interrupt/isr.h"
 
 const uint8_t KEYBOARD_DATA_PORT   = 0x60;
 const uint8_t KEYBOARD_STATUS_PORT = 0x64;

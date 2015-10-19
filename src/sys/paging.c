@@ -9,7 +9,7 @@
 #include <kernel/panic.h>
 #include <stdio.h>
 #include <stdint.h>
-#include "../sys/interrupt/isr.h"
+#include "sys/interrupt/isr.h"
 
 enum {
 	PAGING_FLAG_PRESENT  = 0x0001,

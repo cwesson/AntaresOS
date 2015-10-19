@@ -8,7 +8,7 @@
 
 #include <kernel/ioport.h>
 #include <stdint.h>
-#include "../sys/interrupt/isr.h"
+#include "sys/interrupt/isr.h"
 
 /**
  * Converts a BCD number to a standard integer.
@@ -109,3 +109,4 @@ void rtc_init(){
 	outb(RTC_REG_ADDRESS, RTC_REG_STATB);
 	outb(RTC_REG_DATA, prev | RTC_FLAG_IRQ);
 }
+

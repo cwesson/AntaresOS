@@ -4,12 +4,12 @@
  * @author Conlan Wesson
  */
 
-#ifndef DEV_VGA_H
-#define DEV_VGA_H
+#ifndef __DEV_VGA_H_
+#define __DEV_VGA_H__
 
 #include <errno.h>
 
-#include "../hal/device.h"
+#include "hal/device.h"
 
 #define VGA_ADDR_CURSOR 0x000007D1u    //!< Special address to set the cursor position.
 
@@ -37,3 +37,4 @@ int vga_read(unsigned int);
 int vga_write(unsigned int, int);
 
 #endif
+

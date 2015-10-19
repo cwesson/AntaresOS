@@ -10,8 +10,8 @@
 #include <kernel/ioport.h>
 #include <kernel/panic.h>
 #include <stdio.h>
-#include "../dev/fadt.h"
-#include "../dev/sdt.h"
+#include "dev/fadt.h"
+#include "dev/sdt.h"
 
 const struct fadt *fadt;
 

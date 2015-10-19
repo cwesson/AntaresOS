@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "rtc.h"
-#include "../sys/interrupt/isr.h"
+#include "sys/interrupt/isr.h"
 
 #define PIT_CH0_IRQ (IRQ0)
 #define PIT_BEEP_ENABLE (0x03)

@@ -7,7 +7,7 @@
 #ifndef __DEV_BDA_H_
 #define __DEV_BDA_H_
 
-#include "../hal/device.h"
+#include "hal/device.h"
 
 typedef enum {
 	BDA_COM1_IOPORT  = 0x0400,

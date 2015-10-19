@@ -9,7 +9,7 @@ CWARN := -Wall -Wextra -Wunused -Werror -Wformat -Wswitch-default -Wswitch-enum 
 	-Wshadow -Wpointer-arith -Wcast-align -Wdate-time -Wlogical-op -Wredundant-decls \
 	-Wnested-externs -Winline -Wvolatile-register-var -Woverlength-strings
 CFLAGS := $(CWARN) -nostdlib -nostartfiles -nodefaultlibs -nostdinc -fno-builtin -std=gnu11 -m32 \
-	-DTIMESTAMP=\"$(TIMESTAMP)\" -DREVISION=\"NONE\" -I./src/include/
+	-DTIMESTAMP=\"$(TIMESTAMP)\" -DREVISION=\"NONE\" -I./src/include/ -iquote./src/
 
 ASM := nasm
 AFLAGS := -f elf

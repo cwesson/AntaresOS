@@ -9,8 +9,8 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdint.h>
-#include "../dev/ram.h"
-#include "../hal/rand.h"
+#include "dev/ram.h"
+#include "hal/rand.h"
 
 typedef uint32_t HEAP_T;               //!< Integer type to use for heap allocations.
 const uint8_t HEAP_HEAD_SIZE = 2;              //!< Number of HEAP_T's in the header.

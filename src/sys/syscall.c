@@ -7,7 +7,7 @@
 #include "syscall.h"
 
 #include <stdint.h>
-#include "../sys/interrupt/isr.h"
+#include "sys/interrupt/isr.h"
 
 //! Array of system call handler functions.
 static sys_func sys_funcs[256] = {0};
@@ -54,3 +54,4 @@ void syscall_init(){
 void syscall_register(uint8_t n, sys_func handler){
 	sys_funcs[n] = handler;
 }
+

@@ -8,7 +8,7 @@
 
 #include <kernel/ioport.h>
 #include <stdint.h>
-#include "../sys/interrupt/isr.h"
+#include "sys/interrupt/isr.h"
 #include <stdio.h>
 
 static int8_t mouse_x = 0;

@@ -8,7 +8,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include "../../dev/ram.h"
+#include "dev/ram.h"
 
 /**
  * Prints the memory map.
@@ -22,3 +22,4 @@ void memmap_print(){
 		mmap = (struct mmap_entry*)((uint32_t)mmap + mmap->size + sizeof(uint32_t));
 	}
 }
+
