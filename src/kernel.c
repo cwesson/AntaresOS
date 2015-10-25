@@ -30,6 +30,7 @@
 #include "tools/date/date.h"
 #include "tools/memmap/memmap.h"
 #include "tools/pciscan/pciscan.h"
+#include <fcntl.h>
 
 static const char *const OS_NAME     = "ConlanOS";  //!< Operating System name string.
 static const char *const OS_VERSION  = "0.0.1pre";  //!< Operating System version string.
@@ -75,6 +76,10 @@ int kmain(const struct multiboot_info *const mbd, unsigned int magic){
 	// Enable system calls.
 	puts("Initializing System Calls\n");
 	syscall_init();
+	
+	files_init();
+	
+	open("/dev/myfile", 0);
 	
 	// Scan memory map.
 	ram_init((struct mmap_entry*)mbd->mmap_addr, mbd->mmap_length, end_kernel);
