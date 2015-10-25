@@ -20,8 +20,11 @@ static sys_func sys_funcs[256] = {0};
  */
 inline syscall_payload *syscall(int num, syscall_payload *payload){
 	asm volatile(
-		"int $0x80;"
-		:: "a"(num), "b"(payload)
+		"int $0x80"
+		: "+a"(num),
+		  "+b"(payload)
+		: 
+		: "memory", "cc"
 	);
 	return payload;
 }
@@ -31,11 +34,11 @@ inline syscall_payload *syscall(int num, syscall_payload *payload){
  * @param regs The registers at the time of the interrupt.
  */
 static void syscall_isr(isr_regs regs){
-	if(sys_funcs[regs.eax]){
-		sys_func handler = sys_funcs[regs.eax];
-		*(uint32_t*)regs.ebx = (uint32_t)handler(regs);
-	}else{
-		*(uint32_t*)regs.ebx = SYS_CALL_BAD;
+	int num = regs.eax;
+	syscall_payload *payload = (syscall_payload*)regs.ebx;
+	if(sys_funcs[num]){
+		sys_func handler = sys_funcs[num];
+		handler(payload);
 	}
 }
 
@@ -51,7 +54,7 @@ void syscall_init(){
  * @param n The syscall number.
  * @param handler Function pointer of the callback function.
  */
-void syscall_register(uint8_t n, sys_func handler){
+void syscall_register(int n, sys_func handler){
 	sys_funcs[n] = handler;
 }
 

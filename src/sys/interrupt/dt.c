@@ -330,7 +330,8 @@ inline static void gdt_init(){
  * @param privl The privilege flag.
  * @param present The present flag.
  */
-static void idt_set_gate(uint8_t num, uint32_t base, idt_priv rpl, uint16_t index, idt_type type, idt_priv privl){
+static void idt_set_gate(uint8_t num, void (*handler)(), idt_priv rpl, uint16_t index, idt_type type, idt_priv privl){
+	uint32_t base = (uint32_t)handler;
 	idt_entries[num].base_lo = base & 0xFFFF;
 	idt_entries[num].base_hi = (base >> 16) & 0xFFFF;
 
@@ -373,57 +374,57 @@ static void idt_init(){
 	uint16_t index = 1;
 
 	// Register exception handlers
-	idt_set_gate(0, (uint32_t)isr0 , sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(1, (uint32_t)isr1 , sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(2, (uint32_t)isr2 , sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(3, (uint32_t)isr3 , sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(4, (uint32_t)isr4 , sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(5, (uint32_t)isr5 , sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(6, (uint32_t)isr6 , sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(7, (uint32_t)isr7 , sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(8, (uint32_t)isr8 , sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(9, (uint32_t)isr9 , sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(10, (uint32_t)isr10, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(11, (uint32_t)isr11, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(12, (uint32_t)isr12, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(13, (uint32_t)isr13, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(14, (uint32_t)isr14, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(15, (uint32_t)isr15, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(16, (uint32_t)isr16, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(17, (uint32_t)isr17, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(18, (uint32_t)isr18, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(19, (uint32_t)isr19, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(20, (uint32_t)isr20, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(21, (uint32_t)isr21, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(22, (uint32_t)isr22, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(23, (uint32_t)isr23, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(24, (uint32_t)isr24, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(25, (uint32_t)isr25, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(26, (uint32_t)isr26, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(27, (uint32_t)isr27, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(28, (uint32_t)isr28, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(29, (uint32_t)isr29, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(30, (uint32_t)isr30, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(31, (uint32_t)isr31, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(0, isr0 , sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(1, isr1 , sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(2, isr2 , sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(3, isr3 , sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(4, isr4 , sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(5, isr5 , sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(6, isr6 , sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(7, isr7 , sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(8, isr8 , sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(9, isr9 , sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(10, isr10, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(11, isr11, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(12, isr12, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(13, isr13, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(14, isr14, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(15, isr15, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(16, isr16, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(17, isr17, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(18, isr18, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(19, isr19, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(20, isr20, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(21, isr21, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(22, isr22, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(23, isr23, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(24, isr24, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(25, isr25, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(26, isr26, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(27, isr27, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(28, isr28, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(29, isr29, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(30, isr30, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(31, isr31, sel, index, IDT_INT32, IDT_PRIV0);
 	// Register hardware IRQs
-	idt_set_gate(IRQ0, (uint32_t)irq0, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(IRQ1, (uint32_t)irq1, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(IRQ2, (uint32_t)irq2, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(IRQ3, (uint32_t)irq3, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(IRQ4, (uint32_t)irq4, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(IRQ5, (uint32_t)irq5, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(IRQ6, (uint32_t)irq6, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(IRQ7, (uint32_t)irq7, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(IRQ8, (uint32_t)irq8, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(IRQ9, (uint32_t)irq9, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(IRQ10, (uint32_t)irq10, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(IRQ11, (uint32_t)irq11, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(IRQ12, (uint32_t)irq12, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(IRQ13, (uint32_t)irq13, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(IRQ14, (uint32_t)irq14, sel, index, IDT_INT32, IDT_PRIV0);
-	idt_set_gate(IRQ15, (uint32_t)irq15, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(IRQ0, irq0, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(IRQ1, irq1, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(IRQ2, irq2, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(IRQ3, irq3, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(IRQ4, irq4, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(IRQ5, irq5, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(IRQ6, irq6, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(IRQ7, irq7, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(IRQ8, irq8, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(IRQ9, irq9, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(IRQ10, irq10, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(IRQ11, irq11, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(IRQ12, irq12, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(IRQ13, irq13, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(IRQ14, irq14, sel, index, IDT_INT32, IDT_PRIV0);
+	idt_set_gate(IRQ15, irq15, sel, index, IDT_INT32, IDT_PRIV0);
 	// Register system call interrupt
-	idt_set_gate(ISR_SYSCALL, (uint32_t)isr128, sel, index, IDT_INT32, IDT_PRIV3);
+	idt_set_gate(ISR_SYSCALL, isr128, sel, index, IDT_INT32, IDT_PRIV0);
 
 	idt_flush(&idtp);
 }

@@ -27,7 +27,7 @@
 #define IRQ13 45
 #define IRQ14 46  //!< Primary ATA
 #define IRQ15 47  //!< Secondary ATA
-#define ISR_SYSCALL 128  //!< System Call
+#define ISR_SYSCALL 0x80  //!< System Call
 
 #define PIC_SLAVE_IRQ_START IRQ8  //!< First IRQ on the slave PIC
 

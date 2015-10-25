@@ -18,7 +18,7 @@ EXTERN irq_handler
 isr%1:
 	cli
 	push  byte 0
-	push  word %1            ; Push a word to surpress "signed byte value exceeds bounds" warning
+	push  dword %1            ; Push a dword to surpress "signed byte value exceeds bounds" warning
 	jmp   isr_common_stub
 %endmacro
 

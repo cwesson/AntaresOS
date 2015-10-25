@@ -58,6 +58,7 @@ void isr_handler(isr_regs regs){
 			puts(int_labels[regs.int_no]);
 		}
 		printf("\nError Code:  %u\n", regs.err_code);
+		printf("eax = %8X       ebx = %8X       ecx = %8X       edx = %8X\n", regs.eax, regs.ebx, regs.ecx, regs.edx);
 		ram_dump((uint8_t*)regs.esp);
 		panic("Unhandled ISR");
 	}

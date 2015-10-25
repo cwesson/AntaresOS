@@ -12,6 +12,16 @@
 
 #define SYS_CALL_BAD 0xBAD5CA11
 
+typedef enum
+{
+	SYSCALL_NONE,
+	SYSCALL_OPEN,
+	SYSCALL_CLOSE,
+	SYSCALL_READ,
+	SYSCALL_WRITE,
+	SYSCALL_LSEEK
+} syscall_num;
+
 //! Stores system call payload.
 typedef union syscall_payload{
 	int i;
@@ -23,7 +33,7 @@ typedef union syscall_payload{
  * Function pointer to system call handlers.
  * @param registers The registers at the time of the interrupt.
  */
-typedef void *(*sys_func)(isr_regs);
+typedef void (*sys_func)(syscall_payload*);
 
 /**
  * System call handler.
@@ -43,6 +53,7 @@ void syscall_init();
  * @param n The syscall number.
  * @param handler Function pointer of the callback function.
  */
-void syscall_register(uint8_t, sys_func);
+void syscall_register(int, sys_func);
 
 #endif
+
