@@ -4,8 +4,8 @@
  * @author Conlan Wesson
  */
 
-#ifndef TOOLS_DATE_DATE_H
-#define TOOLS_DATE_DATE_H
+#ifndef __TOOLS_DATE_DATE_H_
+#define __TOOLS_DATE_DATE_H_
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -34,13 +34,5 @@ void date_print();
  */
 bool date_leap_year(uint16_t year);
 
-/**
- * Calculates the day of the week.
- * @param year The year of the date to calculate.
- * @param month The month of the date to calculate (1-12).
- * @param day The day of the month of the date to calculate (1-31).
- * @return The day of the week, 0 => Sunday, 6 => Saturday.
- */
-uint8_t date_day_of_week(uint16_t year, uint8_t month, uint8_t day);
-
 #endif
+

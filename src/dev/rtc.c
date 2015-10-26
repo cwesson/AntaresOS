@@ -10,6 +10,34 @@
 #include <stdint.h>
 #include "sys/interrupt/isr.h"
 
+enum {
+	RTC_REG_STATA   = 0x0A,
+	RTC_REG_STATB   = 0x0B,
+	RTC_REG_ADDRESS = 0x70,
+	RTC_REG_DATA    = 0x71
+};
+enum {
+	RTC_FLAG_UPDATING = 0x80,
+	RTC_FLAG_24H      = 0x02,
+	RTC_FLAG_BIN      = 0x04,
+	RTC_FLAG_PM       = 0x80,
+	RTC_FLAG_IRQ      = 0x40
+};
+enum {
+	RTC_REG_SEC   = 0x00,
+	RTC_REG_MIN   = 0x02,
+	RTC_REG_HOUR  = 0x04,
+	RTC_REG_DAY   = 0x07,
+	RTC_REG_MONTH = 0x08,
+	RTC_REG_YEAR  = 0x09
+};
+
+#define RTC_YEAR_BASE     (2000)
+
+#define RTC_IRQ (IRQ8)
+
+#define RTC_IRQ_FREQ (1024)
+
 /**
  * Converts a BCD number to a standard integer.
  * @param bcd The BCD number.
@@ -29,11 +57,25 @@ static inline uint8_t int_to_bcd(register uint8_t num){
 }
 
 /**
+ * Calculates the day of the week.
+ * @param year The year of the date to calculate.
+ * @param month The month of the date to calculate (1-12).
+ * @param day The day of the month of the date to calculate (1-31).
+ * @return The day of the week, 0 => Sunday, 6 => Saturday.
+ */
+uint8_t day_of_week(uint16_t year, uint8_t month, uint8_t day){
+	int a = (14-month)/12;
+	int y = year-a;
+	int m = month + 12*a - 2;
+	return (day + y + y/4 - y/100 + y/400 + (31*m/12)) % 7;
+}
+
+/**
  * Gets the current date and time from the RTC.
  * @param dt Pointer to the date/time struct to fill.
  * @return Pointer to the date/time struct with the current time.
  */
-struct datetime *rtc_time(datetime *dt){
+struct tm *rtc_time(struct tm *dt){
 	// Wait for any update to finish
 	while(inb(RTC_REG_STATA) & RTC_FLAG_UPDATING){}
 	
@@ -41,10 +83,10 @@ struct datetime *rtc_time(datetime *dt){
 	
 	// Read seconds
 	outb(RTC_REG_ADDRESS, RTC_REG_SEC);
-	dt->sec = inb(RTC_REG_DATA);
+	dt->tm_sec = inb(RTC_REG_DATA);
 	// Read minutes
 	outb(RTC_REG_ADDRESS, RTC_REG_MIN);
-	dt->min = inb(RTC_REG_DATA);
+	dt->tm_min = inb(RTC_REG_DATA);
 	// Read hours
 	outb(RTC_REG_ADDRESS, RTC_REG_HOUR);
 	uint8_t hour = inb(RTC_REG_DATA);
@@ -63,26 +105,29 @@ struct datetime *rtc_time(datetime *dt){
 			hour = bcd_to_int(hour);
 		}
 	}
-	dt->hour = hour;
+	dt->tm_hour = hour;
 	// Read day of month
 	outb(RTC_REG_ADDRESS, RTC_REG_DAY);
-	dt->day = inb(RTC_REG_DATA);
+	dt->tm_mday = inb(RTC_REG_DATA);
 	// Read month
 	outb(RTC_REG_ADDRESS, RTC_REG_MONTH);
-	dt->month = inb(RTC_REG_DATA);
+	dt->tm_mon = inb(RTC_REG_DATA);
 	// Read year
 	outb(RTC_REG_ADDRESS, RTC_REG_YEAR);
-	dt->year = inb(RTC_REG_DATA);
+	dt->tm_year = inb(RTC_REG_DATA);
 	
 	// Correct for BCD
 	if(bcd){
-		dt->sec = bcd_to_int(dt->sec);
-		dt->min = bcd_to_int(dt->min);
-		dt->day = bcd_to_int(dt->day);
-		dt->month = bcd_to_int(dt->month);
-		dt->year = bcd_to_int(dt->year);
+		dt->tm_sec = bcd_to_int(dt->tm_sec);
+		dt->tm_min = bcd_to_int(dt->tm_min);
+		dt->tm_mday = bcd_to_int(dt->tm_mday);
+		dt->tm_mon = bcd_to_int(dt->tm_mon);
+		dt->tm_year = bcd_to_int(dt->tm_year);
 	}
-	dt->year += RTC_YEAR_BASE;
+	dt->tm_year += RTC_YEAR_BASE-1900;
+	
+	dt->tm_mon--;
+	dt->tm_wday = day_of_week(dt->tm_year+1900, dt->tm_mon+1, dt->tm_mday);
 	
 	return dt;
 }

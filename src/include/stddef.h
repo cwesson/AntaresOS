@@ -25,7 +25,10 @@ typedef signed int ptrdiff_t;
 //! Integer type whose range of values can represent all members of the character set.
 typedef unsigned char wchar_t;
 
-//! Unsigned integer type of the result of the sizeof operator.
-typedef unsigned int size_t;
+#ifndef size_t
+	//! Unsigned integer type of the result of the sizeof operator.
+	typedef unsigned int size_t;
+#endif
 
 #endif /* __INCLUDE_STDDEF_H_ */
+

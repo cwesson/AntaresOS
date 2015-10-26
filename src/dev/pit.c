@@ -52,13 +52,13 @@ static void pit_callback(isr_regs regs){
 	++count;
 	
 	if(count == ch0_freq){
-		datetime dt;
+		struct tm dt;
 		rtc_time(&dt);
-		if(dt.sec == 0 && prev_min != dt.min){
-			printf("\e[s\e[0;0H\e[K\e[7m%04d-%02d-%02d %02d:%02d\e[27m\e[u", dt.year, dt.month, dt.day, dt.hour, dt.min);
+		if(dt.tm_sec == 0 && prev_min != dt.tm_min){
+			printf("\e[s\e[0;0H\e[K\e[7m%04d-%02d-%02d %02d:%02d\e[27m\e[u", dt.tm_year+1900, dt.tm_mon+1, dt.tm_mday, dt.tm_hour, dt.tm_min);
 		}
 		count = 0;
-		prev_min = dt.min;
+		prev_min = dt.tm_min;
 	}
 }
 

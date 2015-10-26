@@ -79,7 +79,8 @@ int kmain(const struct multiboot_info *const mbd, unsigned int magic){
 	
 	files_init();
 	
-	open("/dev/myfile", 0);
+	int fd = open("/dev/myfile", 0);
+	printf("fd=%d\n", fd);
 	
 	// Scan memory map.
 	ram_init((struct mmap_entry*)mbd->mmap_addr, mbd->mmap_length, end_kernel);

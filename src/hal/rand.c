@@ -48,9 +48,9 @@ int rand_write(char seed){
  * Initialize the random number generator.
  */
 void rand_init(){
-	datetime dt;
+	struct tm dt;
 	rtc_time(&dt);
-	rand_write(dt.sec + dt.min*60 + dt.hour*3600 + dt.day*86400);
+	rand_write(dt.tm_sec + dt.tm_min*60 + dt.tm_hour*3600 + dt.tm_mday*86400);
 }
 
 /**
