@@ -1,5 +1,5 @@
 /**
- * @file sys/file.c
+ * @file sys/files.c
  * File control operations.
  * @author Conlan Wesson
  */

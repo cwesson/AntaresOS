@@ -323,12 +323,11 @@ inline static void gdt_init(){
 /**
  * Creates an IDT entry.
  * @param num Interrupt number.
- * @param base Pointer to the corresponding ISR.
- * @param sel IDT selector flags.
+ * @param handler Pointer to the corresponding ISR.
+ * @param rpl Requested privilege level.
  * @param index IDT entry index.
  * @param type IDT gate type.
- * @param privl The privilege flag.
- * @param present The present flag.
+ * @param privl Minimum privilege level requierd.
  */
 static void idt_set_gate(uint8_t num, void (*handler)(), idt_priv rpl, uint16_t index, idt_type type, idt_priv privl){
 	uint32_t base = (uint32_t)handler;

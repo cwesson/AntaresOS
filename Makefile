@@ -25,6 +25,8 @@ SOURCES := $(shell find src/ \( ! -regex '.*/\..*' \) -name \*.c -o -name \*.s)
 BINS := $(addsuffix .o,$(patsubst src/%,bin/%,$(SOURCES)))
 KERNEL := bin/kernel.bin
 
+REDIRECT := 2> >(tee -a errors.log >&2)
+
 
 all: kernel
 
@@ -32,15 +34,15 @@ kernel: $(KERNEL)
 
 $(KERNEL): src/linker.ld bin $(BINS)
 	@echo " LINK  " $<
-	@ld -melf_i386 -o $@ -T $< $(BINS)
+	@ld -melf_i386 -o $@ -T $< $(BINS) $(REDIRECT)
 
 bin/%.s.o: src/%.s
 	@echo " ASM   " $<
-	@$(ASM) $(AFLAGS) -o $@ $<
+	@$(ASM) $(AFLAGS) -o $@ $< $(REDIRECT)
 
 bin/%.c.o: src/%.c
 	@echo " CC    " $<
-	@$(CC) $(CFLAGS) -o $@ -c $<
+	@$(CC) $(CFLAGS) -o $@ -c $< $(REDIRECT)
 
 doc:
 	@echo " RM     doc/html/"
@@ -74,6 +76,8 @@ bin:
 	@find -type d \( ! -regex '.*/\..*' \) | grep ./src/ | sed -e 's/\/src\//\/bin\//' | xargs -l mkdir -p
 
 clean:
+	@echo " CLEAN  *.log"
+	@rm -f *.log
 	@echo " CLEAN  *.o"
 	@rm -f $(BINS)
 

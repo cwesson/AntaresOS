@@ -11,4 +11,4 @@ doc/html/
 
 # Ignore temporary and backup files.
 *~
-
+*.bak
