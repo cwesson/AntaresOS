@@ -9,7 +9,6 @@
 #include <kernel/ioport.h>
 #include <stdint.h>
 #include <stdio.h>
-#include "rtc.h"
 #include "sys/interrupt/isr.h"
 
 #define PIT_CH0_IRQ (IRQ0)
@@ -37,29 +36,16 @@ const float PIT_CLOCK_FREQ = 1193180;
  */
 static uint32_t ch0_freq = 0;
 static float resolution = 0;
+static uint64_t tick = 0;
 
 /**
  * Callback function for interrupt from PIT Channel 0.
  * @param regs Register struct from common ISR.
  */
 static void pit_callback(isr_regs regs){
-	static uint64_t count = 0;
-	static uint64_t tick = 0;
-	static uint8_t prev_min = 255;
 	(void)regs;
 	
 	++tick;
-	++count;
-	
-	if(count == ch0_freq){
-		struct tm dt;
-		rtc_time(&dt);
-		if(dt.tm_sec == 0 && prev_min != dt.tm_min){
-			printf("\e[s\e[0;0H\e[K\e[7m%04d-%02d-%02d %02d:%02d\e[27m\e[u", dt.tm_year+1900, dt.tm_mon+1, dt.tm_mday, dt.tm_hour, dt.tm_min);
-		}
-		count = 0;
-		prev_min = dt.tm_min;
-	}
 }
 
 

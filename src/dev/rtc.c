@@ -9,10 +9,12 @@
 #include <kernel/ioport.h>
 #include <stdint.h>
 #include "sys/interrupt/isr.h"
+#include <stdio.h>
 
 enum {
 	RTC_REG_STATA   = 0x0A,
 	RTC_REG_STATB   = 0x0B,
+	RTC_REG_STATC   = 0x0C,
 	RTC_REG_ADDRESS = 0x70,
 	RTC_REG_DATA    = 0x71
 };
@@ -137,7 +139,25 @@ struct tm *rtc_time(struct tm *dt){
  * @param regs Register struct from common ISR.
  */
 static void rtc_isr(isr_regs regs){
+	static uint64_t count = 0;
+	static uint8_t prev_min = 255;
 	(void)regs;
+	
+	++count;
+	
+	if(count == RTC_IRQ_FREQ){
+		struct tm dt;
+		rtc_time(&dt);
+		if(dt.tm_sec == 0 && prev_min != dt.tm_min){
+			printf("\e[s\e[0;0H\e[K\e[7m%04d-%02d-%02d %02d:%02d\e[27m\e[u", dt.tm_year+1900, dt.tm_mon+1, dt.tm_mday, dt.tm_hour, dt.tm_min);
+		}
+		count = 0;
+		prev_min = dt.tm_min;
+	}
+	
+	// Reset interrupt
+	outb(RTC_REG_ADDRESS, RTC_REG_STATC);
+	(void)inb(RTC_REG_DATA);
 }
 
 /**
