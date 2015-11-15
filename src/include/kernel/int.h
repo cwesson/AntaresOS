@@ -10,12 +10,16 @@
 /**
  * Enable interrupts.
  */
-void sti();
+static inline void sti(){
+	asm volatile("sti");
+}
 
 /**
  * Disable interrupts.
  */
-void cli();
+static inline void cli(){
+	asm volatile("cli");
+}
 
 #endif
 

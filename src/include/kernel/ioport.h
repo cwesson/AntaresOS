@@ -14,28 +14,54 @@
  * @param port The output port.
  * @param val The byte to output.
  */
-void outb(uint16_t port, uint8_t val);
+static inline void outb(uint16_t port, uint8_t val){
+	asm volatile(
+		"outb %0,%1"
+		::"a"(val), "d" (port)
+	);
+}
 
 /**
  * Reads a byte from the specified port.
  * @param port The input port.
  * @return The value read from input.
  */
-uint8_t inb(uint16_t port);
+static inline uint8_t inb(uint16_t port){
+	uint8_t ret;
+	asm volatile(
+		"inb %1,%0"
+		:"=a"(ret)
+		:"Nd"(port)
+	);
+	return ret;
+}
 
 /**
  * Outputs a long to the specified port.
  * @param port The output port.
  * @param val The long to output.
  */
-void outl(uint16_t port, uint32_t val);
+static inline void outl(uint16_t port, uint32_t val){
+	asm volatile(
+		"outl %0,%1"
+		::"a"(val), "d" (port)
+	);
+}
 
 /**
  * Reads a long from the specified port.
  * @param port The input port.
  * @return The value long from input.
  */
-uint32_t inl(uint16_t port);
+static inline uint32_t inl(uint16_t port){
+	uint32_t ret;
+	asm volatile(
+		"inl %1,%0"
+		:"=a"(ret)
+		:"d"(port)
+	);
+	return ret;
+}
 
 #endif
 
