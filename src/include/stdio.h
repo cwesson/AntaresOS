@@ -10,7 +10,9 @@
 #include <stdint.h>
 #include "hal/device.h"
 
-#define EOF  (-1)    //!< End-of-File indicator.
+enum {
+	EOF = -1,    //!< End-of-File indicator.
+};
 
 #ifndef NULL
 	#define NULL ((void*)0)    //!< Null pointer

@@ -13,9 +13,10 @@
 	#define NULL ((void*)0)    //!< Null pointer
 #endif
 
-#define EXIT_FAILURE (-1)    //!< Unsuccessful termination.
-
-#define EXIT_SUCCESS  (0)    //!< Successful termination.
+enum {
+	EXIT_FAILURE = -1,    //!< Unsuccessful termination.
+	EXIT_SUCCESS =  0,    //!< Successful termination.
+};
 
 /**
  * Initializes the heap.
