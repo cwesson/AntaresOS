@@ -124,7 +124,12 @@ bool cpuid_run(){
 			puts("RDMSR and WRMSR\n");
 		}
 		if(out.edx & (1<<4)){
-			puts("RDTSC\n");
+			uint64_t rdtsc;
+			asm volatile (
+				"rdtsc"
+				: "=A"(rdtsc)
+			);
+			printf("RDTSC %d\n", rdtsc>>16);
 		}
 		if(out.edx & (1<<11)){
 			puts("SYSENTER and SYSEXIT\n");
