@@ -88,7 +88,7 @@ static unsigned int __putnum_actual(int num, unsigned int base, unsigned int gro
 				putchar(pad);
 				++count;
 				// Print group and digit seperators in padding.
-				if(group_sep && (i-1) % group_size == 0){
+				if(group_size && group_sep && (i-1) % group_size == 0){
 					putchar(group_sep);
 					++count;
 				}else if(digit_sep){
@@ -120,7 +120,7 @@ static unsigned int __putnum_actual(int num, unsigned int base, unsigned int gro
 	
 	// Print group and digit seperators.
 	if(depth){
-		if(group_sep && depth % group_size == 0){
+		if(group_size && group_sep && depth % group_size == 0){
 			putchar(group_sep);
 			++count;
 		}else if(digit_sep){

@@ -7,10 +7,14 @@ foreach my $in(<STDIN>){
 	if($in =~ /\[(.+)\:(\d+)\]\:\s+\((\w+)\)/){
 		$file = $1;
 		$line = $2;
-		if(defined($count{$3})){
-			$count{$3}++;
+		$type = $3;
+		if(defined($count{$type})){
+			$count{$type}++;
 		}else{
-			$count{$3} = 1;
+			$count{$type} = 1;
+		}
+		if($type eq "error"){
+			$stderr.print $in;
 		}
 	}
 }

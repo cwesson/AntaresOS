@@ -21,14 +21,17 @@ ISOFLAGS := -J -R -D -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 
 LINT := -q --enable=all -I./src/include/ -I./src/
 
 SOURCES := $(shell find src/ \( ! -regex '.*/\..*' \) -name \*.c -o -name \*.s)
-
 BINS := $(addsuffix .o,$(patsubst src/%,bin/%,$(SOURCES)))
+
 KERNEL := bin/kernel.bin
+BOOTCD := bin/bootcd.iso
 
 REDIRECT := 2> >(tee -a errors.log >&2)
 
 
-all: kernel
+all: boot
+
+boot: $(BOOTCD)
 
 kernel: $(KERNEL)
 
@@ -55,11 +58,7 @@ lint:
 	@rm -f lint.log
 	@cppcheck $(LINT) ./src/ 2> >(tee lint.log | scripts/lintsum.pl)
 
-.NOTPARALLEL:
-
-boot: bin/bootcd.iso
-
-bin/bootcd.iso: all
+$(BOOTCD): kernel
 	@rm -rf bin/isofiles
 	@echo " MKDIR " bin/isofiles
 	@mkdir -p bin/isofiles
@@ -70,7 +69,9 @@ bin/bootcd.iso: all
 	@echo " ISO   " $@
 	@genisoimage $(ISOFLAGS) -o $@ bin/isofiles
 	@scripts/validate
-	
+
+.NOTPARALLEL:
+
 bin:
 	@echo " MKDIR  bin"
 	@find -type d \( ! -regex '.*/\..*' \) | grep ./src/ | sed -e 's/\/src\//\/bin\//' | xargs -l mkdir -p
