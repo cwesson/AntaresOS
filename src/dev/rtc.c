@@ -140,12 +140,12 @@ struct tm *rtc_time(struct tm *dt){
  */
 static void rtc_isr(isr_regs regs){
 	static uint64_t count = 0;
-	static uint8_t prev_min = 255;
 	(void)regs;
 	
 	++count;
 	
 	if(count == RTC_IRQ_FREQ){
+		static uint8_t prev_min = 255;
 		struct tm dt;
 		rtc_time(&dt);
 		if(dt.tm_sec == 0 && prev_min != dt.tm_min){

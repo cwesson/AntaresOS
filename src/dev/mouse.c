@@ -21,8 +21,6 @@ static int8_t mouse_y = 0;
 static void mouse_isr(isr_regs regs){
 	static uint8_t mouse_cycle = 0;
 	static int8_t mouse_byte[] = {0, 0, 0};
-	static int8_t prev_x = -1;
-	static int8_t prev_y = -1;
 	
 	(void)regs;
 	
@@ -41,6 +39,8 @@ static void mouse_isr(isr_regs regs){
 			mouse_byte[2] = inb(0x60);
 			mouse_cycle = 0;
 			if(!(mouse_byte[0] & 0xC0)){
+				static int8_t prev_x = -1;
+				static int8_t prev_y = -1;
 				mouse_x += mouse_byte[1]/2;
 				mouse_y -= mouse_byte[2]/2;
 				if(mouse_x < 0){

@@ -15,13 +15,21 @@ CFLAGS := $(CWARN) -nostdlib -nostartfiles -nodefaultlibs -nostdinc -fno-builtin
 ASM := nasm
 AFLAGS := -f elf
 
+AR := ar
+ARFLAGS :=rcs
+
+LD := ld
+LDFLAGS := -melf_i386 -static -Lbin/lib/
+
+ISO := genisoimage
 ISOFLAGS := -J -R -D -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -boot-info-table -quiet \
 	-input-charset utf-8 -hide boot.catalog -hide-joliet boot.catalog -V "AntaresOS"
 
-LINT := -q --enable=all -I./src/include/ -I./src/
+LINT := cppcheck
+LINTFLAGS := -q --enable=all -I./src/include/ -I./src/
 
-BINSRC := $(shell find src/ ! -wholename src/lib/\* \( ! -regex '.*/\..*' \) -name \*.c -o -name \*.s)
-BINS := $(addsuffix .o,$(patsubst src/%,bin/%,$(basename $(BINSRC))))
+OBJSRC := $(shell find src/ ! -wholename src/lib/\* \( ! -regex '.*/\..*' \) -name \*.c -o -name \*.s)
+OBJS := $(addsuffix .o,$(patsubst src/%,bin/%,$(basename $(OBJSRC))))
 
 LIBSRC := $(shell find src/lib/ \( ! -regex '.*/\..*' \) -name \*.c -o -name \*.s)
 LIBBINS := $(addsuffix .o,$(patsubst src/%,bin/%,$(basename $(LIBSRC))))
@@ -39,9 +47,9 @@ boot: $(BOOTCD)
 
 kernel: $(KERNEL)
 
-$(KERNEL): src/linker.ld $(BINS) $(LIBS)
+$(KERNEL): src/linker.ld $(OBJS) $(LIBS)
 	@echo " LINK  " $<
-	@ld -melf_i386 -o $@ -T $< -static $(BINS) -Lbin/lib/ -lstd -lpanic -lqueue $(REDIRECT)
+	@$(LD) $(LDFLAGS) -o $@ -T $< $(OBJS) -lstd -lpanic -lqueue $(REDIRECT)
 
 bin/%.o: src/%.s
 	@echo " ASM   " $<
@@ -56,18 +64,17 @@ bin/%.o: src/%.c
 $(LIBS): $(LIBBINS)
 	$(eval name := $(patsubst lib%,bin/lib/%/,$(basename $(notdir $@))))
 	@echo " AR    " $(name)
-	@ar rcs $@ $(filter $(name)%,$^) $(REDIRECT)
+	@$(AR) $(ARFLAGS) $@ $(filter $(name)%,$^) $(REDIRECT)
 
 doc:
-	@echo " RM     doc/html/"
-	@rm -rf doc/html/
 	@echo " DOC    Doxyfile"
+	@rm -rf doc/html/
 	@doxygen Doxyfile
 
 lint:
 	@echo " LINT   "
 	@rm -f lint.log
-	@cppcheck $(LINT) ./src/ 2> >(tee lint.log | scripts/lintsum.pl)
+	@$(LINT) $(LINTFLAGS) ./src/ 2> >(tee lint.log | scripts/lintsum.pl)
 
 $(BOOTCD): $(KERNEL)
 	@rm -rf bin/isofiles
@@ -78,7 +85,7 @@ $(BOOTCD): $(KERNEL)
 	@echo " CP    " $(KERNEL)
 	@cp $(KERNEL) bin/isofiles/boot/
 	@echo " ISO    bin/isofiles/"
-	@genisoimage $(ISOFLAGS) -o $@ bin/isofiles
+	@$(ISO) $(ISOFLAGS) -o $@ bin/isofiles
 	@scripts/validate
 
 .NOTPARALLEL:
@@ -87,7 +94,7 @@ clean:
 	@echo " CLEAN  *.log"
 	@rm -f *.log
 	@echo " CLEAN  *.o *.a"
-	@rm -f $(BINS) $(LIBBINS) $(LIBS)
+	@rm -f $(OBJS) $(LIBBINS) $(LIBS)
 
 realclean: clean
 	@echo " CLEAN  bin/"

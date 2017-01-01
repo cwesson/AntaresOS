@@ -129,7 +129,7 @@ bool cpuid_run(){
 				"rdtsc"
 				: "=A"(rdtsc)
 			);
-			printf("RDTSC %d\n", rdtsc>>16);
+			printf("RDTSC %llu\n", rdtsc>>16);
 		}
 		if(out.edx & (1<<11)){
 			puts("SYSENTER and SYSEXIT\n");

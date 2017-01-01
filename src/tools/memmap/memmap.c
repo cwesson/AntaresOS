@@ -18,7 +18,7 @@ void memmap_print(){
 	uint32_t length = ram_mmap_length();
 	uint32_t addr = (uint32_t)mmap;
 	while((uint32_t)mmap < addr + length){
-		printf("0x%8X  %10dB Type %u\n", (uint32_t)mmap->addr, (uint32_t)mmap->len, mmap->type);
+		printf("0x%08X  %10uB Type %u\n", (uint32_t)mmap->addr, (uint32_t)mmap->len, mmap->type);
 		mmap = (struct mmap_entry*)((uint32_t)mmap + mmap->size + sizeof(uint32_t));
 	}
 }

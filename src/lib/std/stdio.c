@@ -11,6 +11,7 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <string.h>
 #include "hal/console.h"
 #include "dev/vga.h"
 #include "dev/keyboard.h"
@@ -139,7 +140,8 @@ static unsigned int __putnum_actual(int num, unsigned int base, unsigned int gro
  */
 int puts(const char *str){
 	int count = 0;
-	for(int i = 0; str[i] && i < MAX_LENGTH; ++i){
+	size_t max = strlen(str);
+	for(unsigned int i = 0; i < max; ++i){
 		if(putchar(str[i]) != str[i]){
 			return EOF;
 		}
@@ -159,17 +161,20 @@ int printf(const char *format, ...){
 	unsigned int count = 0;
 	va_list ap;
 	va_start(ap, format);
-	for(int i = 0; format[i] && i < MAX_LENGTH; ++i){
+	size_t max = strlen(format);
+	for(unsigned int i = 0; i < max; ++i){
 		if(format[i] != '%'){
-			if(putchar(format[i]) != format[i]){
+			if(putchar(format[i]) == EOF){
+				va_end(ap);
 				return EOF;
 			}
 			++count;
 		}else{
 			bool handled = false;
 			bool left = false;
-			bool show_sign = false;
-			bool zero_pad = false;
+			bool show_radix = false;
+			enum putnum_sign sign = PUTNUM_SIGN_NLEAD;
+			char pad = ' ';
 			unsigned int width = 0;
 			bool dot = false;
 			unsigned int precision = 0;
@@ -180,6 +185,7 @@ int printf(const char *format, ...){
 				if(type == 'p'){
 					int ret = puts("0x");
 					if(ret < 0){
+						va_end(ap);
 						return EOF;
 					}
 					count += ret;
@@ -187,7 +193,8 @@ int printf(const char *format, ...){
 					width = 8;
 				}
 				if(type == '%'){
-					if(putchar(format[i]) != format[i]){
+					if(putchar(format[i]) == EOF){
+						va_end(ap);
 						return EOF;
 					}
 					++count;
@@ -199,36 +206,33 @@ int printf(const char *format, ...){
 				}else if(type == 's'){
 					int ret = puts(va_arg(ap, char*));
 					if(ret < 0){
+						va_end(ap);
 						return EOF;
 					}
 					count += ret;
 					handled = true;
 				}else if(type == 'i' || type == 'd'){
-					enum putnum_sign sign = PUTNUM_SIGN_NLEAD;
-					char pad = ' ';
-					if(show_sign){
-						sign = PUTNUM_SIGN_PLEAD;
-					}
-					if(zero_pad){
-						pad = '0';
-					}
 					count += putnum(va_arg(ap, int), 10, 3, 0, 0, width, pad, sign, false);
 					handled = true;
 				}else if(type == 'u'){
-					char pad = ' ';
-					if(zero_pad){
-						pad = '0';
+					count += putnum(va_arg(ap, unsigned int), 10, 3, 0, 0, width, pad, sign, false);
+					handled = true;
+				}else if(type == 'x' || type == 'X'){
+					bool cap = false;
+					if(type == 'X'){
+						cap = true;
 					}
-					count += putnum(va_arg(ap, unsigned int), 10, 3, 0, 0, width, pad, PUTNUM_SIGN_NONE, false);
-					handled = true;
-				}else if(type == 'x'){
-					count += putnum(va_arg(ap, unsigned int), 16, 4, 0, 0, width, '0', PUTNUM_SIGN_NONE, false);
-					handled = true;
-				}else if(type == 'X'){
-					count += putnum(va_arg(ap, unsigned int), 16, 4, 0, 0, width, '0', PUTNUM_SIGN_NONE, true);
+					if(show_radix){
+						count += puts("0x");
+					}
+					count += putnum(va_arg(ap, unsigned int), 16, 4, 0, 0, width, pad, PUTNUM_SIGN_NONE, cap);
 					handled = true;
 				}else if(type == 'o'){
-					count += putnum(va_arg(ap, int), 8, 3, 0, 0, width, '0', PUTNUM_SIGN_NONE, false);
+					if(show_radix){
+						putchar('0');
+						++count;
+					}
+					count += putnum(va_arg(ap, unsigned int), 8, 3, 0, 0, width, pad, PUTNUM_SIGN_NONE, false);
 					handled = true;
 				}else if(type == 'f'){
 					count += putfloat(va_arg(ap, double), precision);
@@ -239,14 +243,22 @@ int printf(const char *format, ...){
 				}else if(type == '-'){
 					left = true;
 				}else if(type == '+'){
-					show_sign = true;
+					sign = PUTNUM_SIGN_PLEAD;
+				}else if(type == '#'){
+					show_radix = true;
 				}else if(type == '0' && (width == 0 || dot)){
-					zero_pad = true;
+					pad = '0';
 				}else if(type >= '0' && type <= '9'){
 					if(!dot){
 						width = (width * 10) + (type - '0');
 					}else{
 						precision = (precision * 10) + (type - '0');
+					}
+				}else if(type == '*'){
+					if(!dot){
+						width = va_arg(ap, int);
+					}else{
+						precision = va_arg(ap, int);
 					}
 				}else if(type == '.'){
 					dot = true;
@@ -261,6 +273,7 @@ int printf(const char *format, ...){
 			}
 		}
 	}
+	va_end(ap);
 	return count;
 }
 
@@ -269,7 +282,8 @@ int printf(const char *format, ...){
  * @param str String to write.
  */
 void perror(const char *str){
-	for(int i = 0; str[i] && i < MAX_LENGTH; ++i){
+	size_t max = strlen(str);
+	for(unsigned int i = 0; i < max; ++i){
 		stderr->swrite(str[i]);
 	}
 }
