@@ -53,5 +53,8 @@ typedef uint32_t uintptr_t;
 typedef int64_t intmax_t;
 typedef uint64_t uintmax_t;
 
+#define SIZE_MAX ((size_t)0xFFFFFFFF)
+#define RSIZE_MAX ((size_t)(SIZE_MAX >> 1))
+
 #endif /* __INCLUDE_STDINT_H_ */
 

@@ -30,5 +30,8 @@ typedef unsigned char wchar_t;
 	typedef unsigned int size_t;
 #endif
 
+//! C11 Annex K type for object sizes.
+typedef size_t rsize_t;
+
 #endif /* __INCLUDE_STDDEF_H_ */
 

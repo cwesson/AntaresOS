@@ -8,7 +8,7 @@
 #define __INCLUDE_ERRNO_H_
 
 //! Integer type used for indicating errors.
-enum {
+typedef enum {
 	EOK = 0,         //!< Not an error.
 	
 	// ISO C required errors.
@@ -93,7 +93,10 @@ enum {
 	ETXTBSY,         //!< Text file busy.
 	EWOULDBLOCK,     //!< Operation would block (may be the same value as [EAGAIN]).
 	EXDEV            //!< Cross-device link.
-} errno;
+} errno_t;
+
+//! Stores the currnet error state.
+errno_t errno;
 
 #endif /* __INCLUDE_ERRNO_H_ */
 

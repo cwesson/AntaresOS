@@ -7,11 +7,7 @@
 #ifndef __INCLUDE_STDLIB_H_
 #define __INCLUDE_STDLIB_H_
 
-#include <stdint.h>
-
-#ifndef NULL
-	#define NULL ((void*)0)    //!< Null pointer
-#endif
+#include <stddef.h>
 
 enum {
 	EXIT_FAILURE = -1,    //!< Unsuccessful termination.
@@ -31,7 +27,7 @@ int heap_init(void*[], void*[]);
  * @param size Number of bytes to allocate.
  * @return Pointer to the allocated space.
  */
-void *malloc(uint32_t);
+void *malloc(size_t);
 
 /**
  * Deallocates space on the heap.
