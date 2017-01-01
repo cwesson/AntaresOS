@@ -1,5 +1,5 @@
 /**
- * @file include/queue.c
+ * @file lib/queue/queue.c
  * Queue Data Structure (FIFO).
  * @author Conlan Wesson
  */

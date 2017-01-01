@@ -20,8 +20,12 @@ ISOFLAGS := -J -R -D -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 
 
 LINT := -q --enable=all -I./src/include/ -I./src/
 
-SOURCES := $(shell find src/ \( ! -regex '.*/\..*' \) -name \*.c -o -name \*.s)
-BINS := $(addsuffix .o,$(patsubst src/%,bin/%,$(SOURCES)))
+BINSRC := $(shell find src/ ! -wholename src/lib/\* \( ! -regex '.*/\..*' \) -name \*.c -o -name \*.s)
+BINS := $(addsuffix .o,$(patsubst src/%,bin/%,$(basename $(BINSRC))))
+
+LIBSRC := $(shell find src/lib/ \( ! -regex '.*/\..*' \) -name \*.c -o -name \*.s)
+LIBBINS := $(addsuffix .o,$(patsubst src/%,bin/%,$(basename $(LIBSRC))))
+LIBS := $(addsuffix .a,$(patsubst src/lib/%,bin/lib/lib%,$(wildcard src/lib/*)))
 
 KERNEL := bin/kernel.bin
 BOOTCD := bin/bootcd.iso
@@ -35,17 +39,24 @@ boot: $(BOOTCD)
 
 kernel: $(KERNEL)
 
-$(KERNEL): src/linker.ld bin $(BINS)
+$(KERNEL): src/linker.ld $(BINS) $(LIBS)
 	@echo " LINK  " $<
-	@ld -melf_i386 -o $@ -T $< $(BINS) $(REDIRECT)
+	@ld -melf_i386 -o $@ -T $< -static $(BINS) -Lbin/lib/ -lstd -lpanic -lqueue $(REDIRECT)
 
-bin/%.s.o: src/%.s
+bin/%.o: src/%.s
 	@echo " ASM   " $<
+	@mkdir -p $(dir $@)
 	@$(ASM) $(AFLAGS) -o $@ $< $(REDIRECT)
 
-bin/%.c.o: src/%.c
+bin/%.o: src/%.c
 	@echo " CC    " $<
+	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -o $@ -c $< $(REDIRECT)
+
+$(LIBS): $(LIBBINS)
+	$(eval name := $(patsubst lib%,bin/lib/%/,$(basename $(notdir $@))))
+	@echo " AR    " $(name)
+	@ar rcs $@ $(filter $(name)%,$^) $(REDIRECT)
 
 doc:
 	@echo " RM     doc/html/"
@@ -58,7 +69,7 @@ lint:
 	@rm -f lint.log
 	@cppcheck $(LINT) ./src/ 2> >(tee lint.log | scripts/lintsum.pl)
 
-$(BOOTCD): kernel
+$(BOOTCD): $(KERNEL)
 	@rm -rf bin/isofiles
 	@echo " MKDIR " bin/isofiles
 	@mkdir -p bin/isofiles
@@ -66,21 +77,17 @@ $(BOOTCD): kernel
 	@cp -r src/boot/ bin/isofiles
 	@echo " CP    " $(KERNEL)
 	@cp $(KERNEL) bin/isofiles/boot/
-	@echo " ISO   " $@
+	@echo " ISO    bin/isofiles/"
 	@genisoimage $(ISOFLAGS) -o $@ bin/isofiles
 	@scripts/validate
 
 .NOTPARALLEL:
 
-bin:
-	@echo " MKDIR  bin"
-	@find -type d \( ! -regex '.*/\..*' \) | grep ./src/ | sed -e 's/\/src\//\/bin\//' | xargs -l mkdir -p
-
 clean:
 	@echo " CLEAN  *.log"
 	@rm -f *.log
-	@echo " CLEAN  *.o"
-	@rm -f $(BINS)
+	@echo " CLEAN  *.o *.a"
+	@rm -f $(BINS) $(LIBBINS) $(LIBS)
 
 realclean: clean
 	@echo " CLEAN  bin/"

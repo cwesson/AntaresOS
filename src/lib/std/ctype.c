@@ -1,5 +1,5 @@
 /**
- * @file include/ctype.c
+ * @file lib/std/ctype.c
  * Implementation if the ctype specification.
  * @author Conlan Wesson
  */

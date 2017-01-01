@@ -1,10 +1,10 @@
 /**
- * @file include/kernel/panic.c
+ * @file lib/panic/panic.c
  * Kernel panic handler.
  * @author Conlan Wesson
  */
 
-#include "panic.h"
+#include <kernel/panic.h>
 
 #include <stdint.h>
 #include <stdio.h>

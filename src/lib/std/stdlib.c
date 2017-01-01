@@ -1,5 +1,5 @@
 /**
- * @file include/stdlib.c
+ * @file lib/std/stdlib.c
  * Standard library functions.
  * @author Conlan Wesson
  */

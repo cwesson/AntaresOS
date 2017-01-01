@@ -1,5 +1,5 @@
 /**
- * @file include/string.c
+ * @file lib/std/string.c
  * Standard library string functions.
  * @author Conlan Wesson
  */

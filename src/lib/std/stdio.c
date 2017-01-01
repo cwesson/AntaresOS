@@ -1,5 +1,5 @@
 /**
- * @file include/stdio.c
+ * @file lib/std/stdio.c
  * Standard I/O functions.
  * @author Conlan Wesson
  */
