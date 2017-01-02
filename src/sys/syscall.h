@@ -10,16 +10,16 @@
 #include <stdint.h>
 #include "interrupt/isr.h"
 
-#define SYS_CALL_BAD 0xBAD5CA11
-
 typedef enum
 {
-	SYSCALL_NONE,
+	SYSCALL_NONE = 0,
 	SYSCALL_OPEN,
 	SYSCALL_CLOSE,
 	SYSCALL_READ,
 	SYSCALL_WRITE,
-	SYSCALL_LSEEK
+	SYSCALL_LSEEK,
+	
+	SYSCALL_BAD = 0xBAD5CA11
 } syscall_num;
 
 //! Stores system call payload.
@@ -53,7 +53,7 @@ void syscall_init();
  * @param n The syscall number.
  * @param handler Function pointer of the callback function.
  */
-void syscall_register(int, sys_func);
+void syscall_register(int n, sys_func handler);
 
 #endif
 

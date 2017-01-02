@@ -13,6 +13,14 @@
 static sys_func sys_funcs[256] = {0};
 
 /**
+ * No system call.
+ * @param arg Syscall payload.
+ */
+void syscall_none(syscall_payload *arg){
+	(void)arg;
+}
+
+/**
  * System call handler.
  * @param num System call number.
  * @param payload System call specific information.
@@ -46,6 +54,7 @@ static void syscall_isr(isr_regs regs){
  * Initializes the system call handler.
  */
 void syscall_init(){
+	syscall_register(SYSCALL_NONE, syscall_none);
 	isr_register(ISR_SYSCALL, &syscall_isr);
 }
 

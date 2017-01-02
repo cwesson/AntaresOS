@@ -19,11 +19,5 @@ struct files_open_arg{
  */
 void files_init();
 
-/**
- * File open system call.
- * @param arg Syscall payload pointing to file open struct.
- */
-void files_open(syscall_payload *arg);
-
 #endif
 
