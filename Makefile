@@ -10,13 +10,13 @@ CWARN := -Wall -Wextra -Wunused -Werror -Wformat -Wswitch-default -Wswitch-enum 
 	-Wshadow -Wpointer-arith -Wcast-align -Wdate-time -Wlogical-op -Wredundant-decls \
 	-Wnested-externs -Winline -Wvolatile-register-var -Woverlength-strings
 CFLAGS := $(CWARN) -nostdlib -nostartfiles -nodefaultlibs -nostdinc -fno-builtin -std=gnu11 -m32 \
-	-DTIMESTAMP=\"$(TIMESTAMP)\" -DREVISION=\"$(REVISION)\" -I./src/include/ -iquote./src/
+	-DREVISION=\"$(REVISION)\" -I./src/include/ -iquote./src/
 
 ASM := nasm
 AFLAGS := -f elf
 
 AR := ar
-ARFLAGS :=rcs
+ARFLAGS := rcsD
 
 LD := ld
 LDFLAGS := -melf_i386 -static -Lbin/lib/
@@ -29,11 +29,11 @@ LINT := cppcheck
 LINTFLAGS := -q --enable=all -I./src/include/ -I./src/
 
 OBJSRC := $(shell find src/ ! -wholename src/lib/\* \( ! -regex '.*/\..*' \) -name \*.c -o -name \*.s)
-OBJS := $(addsuffix .o,$(patsubst src/%,bin/%,$(basename $(OBJSRC))))
+OBJS := $(sort $(addsuffix .o,$(patsubst src/%,bin/%,$(basename $(OBJSRC)))))
 
 LIBSRC := $(shell find src/lib/ \( ! -regex '.*/\..*' \) -name \*.c -o -name \*.s)
-LIBBINS := $(addsuffix .o,$(patsubst src/%,bin/%,$(basename $(LIBSRC))))
-LIBS := $(addsuffix .a,$(patsubst src/lib/%,bin/lib/lib%,$(wildcard src/lib/*)))
+LIBBINS := $(sort $(addsuffix .o,$(patsubst src/%,bin/%,$(basename $(LIBSRC)))))
+LIBS := $(sort $(addsuffix .a,$(patsubst src/lib/%,bin/lib/lib%,$(wildcard src/lib/*))))
 
 KERNEL := bin/kernel.bin
 BOOTCD := bin/bootcd.iso
@@ -46,10 +46,12 @@ all: boot
 boot: $(BOOTCD)
 
 kernel: $(KERNEL)
+	@scripts/validate $(KERNEL)
 
 $(KERNEL): src/linker.ld $(OBJS) $(LIBS)
 	@echo " LINK  " $<
-	@$(LD) $(LDFLAGS) -o $@ -T $< $(OBJS) -lstd -lpanic -lqueue $(REDIRECT)
+	$(eval libnames := $(addprefix -l,$(patsubst lib%,%,$(basename $(notdir $(LIBS))))))
+	@$(LD) $(LDFLAGS) -o $@ -T $< $(OBJS) $(libnames) $(REDIRECT)
 
 bin/%.o: src/%.s
 	@echo " ASM   " $<
@@ -78,7 +80,6 @@ lint:
 
 $(BOOTCD): $(KERNEL)
 	@rm -rf bin/isofiles
-	@echo " MKDIR " bin/isofiles
 	@mkdir -p bin/isofiles
 	@echo " CP     src/boot/"
 	@cp -r src/boot/ bin/isofiles
@@ -86,7 +87,7 @@ $(BOOTCD): $(KERNEL)
 	@cp $(KERNEL) bin/isofiles/boot/
 	@echo " ISO    bin/isofiles/"
 	@$(ISO) $(ISOFLAGS) -o $@ bin/isofiles
-	@scripts/validate
+	@scripts/validate $(KERNEL) $(BOOTCD)
 
 .NOTPARALLEL:
 

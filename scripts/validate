@@ -1,13 +1,11 @@
 #!/bin/bash
 
-LIST="kernel.bin bootcd.iso"
+LIST=$@
 FORMAT="%-10s %-40s %8s %-.19s\n"
-CHECKSUMOUT="AntaresOS.sha1"
+CHECKSUMOUT="bin/AntaresOS.sha1"
 
 printf "$FORMAT" "Filename" "SHA1 Sum" "Size" "Timestamp"
 echo --------------------------------------------------------------------------------
-
-cd bin/
 
 if [ -e $CHECKSUMOUT ] ; then
 	rm $CHECKSUMOUT
@@ -17,10 +15,10 @@ for FILE in $LIST; do
 	SUM=`sha1sum $FILE | cut -d ' ' -f 1`
 	SIZE=`du -b $FILE | cut -f 1`
 	TIME=`stat -c %y $FILE`
-	printf "$FORMAT" $FILE $SUM $SIZE "$TIME"
-	echo $SUM $FILE >> $CHECKSUMOUT
+	printf "$FORMAT" $(basename $FILE) $SUM $SIZE "$TIME"
+	echo $SUM $(basename $FILE) >> $CHECKSUMOUT
 
-	java -jar ../scripts/Vash.jar -a 1.1 -f $FILE -w 512 -h 512 -o $FILE.vash.png
-	echo $SUM | ../scripts/drunkenbishop.pl > $FILE.sum
+	java -jar scripts/Vash.jar -a 1.1 -f $FILE -w 512 -h 512 -o $FILE.vash.png
+	echo $SUM | scripts/drunkenbishop.pl > $FILE.sum
 done
 

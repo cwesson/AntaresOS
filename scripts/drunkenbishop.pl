@@ -4,8 +4,7 @@ use constant {
 	START_X => 8,
 	START_Y => 4,
 	SIZE_X => 17,
-	SIZE_Y => 9,
-	STRING_LEN => 32
+	SIZE_Y => 9
 };
 
 my @field;
@@ -24,15 +23,18 @@ sub isxdigit($){
 my $x = START_X;
 my $y = START_Y;
 
-for(my $i = 0; $i < STRING_LEN/2; $i++){
+my $line = <STDIN>;
+my $len = length($line);
+
+for(my $i = 0; $i < $len; ){
 	my @word = (0, 0);
 	for(my $j = 0; $j < 2; $j++){
-		my $c = getc();
-		if(not isxdigit($c)){
+		my $c = substr($line, $i++, 1);
+		if(isxdigit($c)){
+			$word[$j] = hex($c);
+		}else{
 			$j--;
-			continue;
 		}
-		$word[$j] = hex($c);
 	}
 	my @move = (0, 0, 0, 0);
 	$move[0] = $word[1] & 0x03;
@@ -63,6 +65,9 @@ for(my $i = 0; $i < STRING_LEN/2; $i++){
 			$y = 0;
 		}
 		$field[$x][$y]++;
+		if($field[$x][$y] > 14){
+			$field[$x][$y] = 14;
+		}
 	}
 }
 	
@@ -73,14 +78,9 @@ printf("+-----------------+\n");
 for($y = 0; $y < SIZE_Y; $y++){
 	print('|');
 	for($x = 0; $x < SIZE_X; $x++){
-		my $count = $field[$x][$y];
-		if($count > 16){
-			$count = 14;
-		}
-		print($values[$count]);
+		print($values[$field[$x][$y]]);
 	}
 	printf("|\n");
 }
 printf("+-----------------+\n");
-
 
