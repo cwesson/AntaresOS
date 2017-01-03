@@ -7,6 +7,7 @@
 #ifndef __INCLUDE_STDLIB_H_
 #define __INCLUDE_STDLIB_H_
 
+#include <errno.h>
 #include <stddef.h>
 
 enum {
@@ -46,6 +47,37 @@ int rand();
  * @param val The value to seed the RNG.
  */
 void srand(unsigned int val);
+
+/**
+ * Constraint handler callback function.
+ * @param msg Description of the error.
+ * @param ptr Pointer to error details.
+ * @param error error number that occured.
+ */
+typedef void (*constraint_handler_t)(const char *msg, void *ptr, errno_t error);
+
+/**
+ * Set the constraint handler function.
+ * @param handler New constraint callback function.
+ * @return Old constraint callback function.
+ */
+constraint_handler_t set_constraint_handler_s(constraint_handler_t handler);
+
+/**
+ * Aborts execution of the program.
+ * @param msg Description of the error.
+ * @param ptr Pointer to error details.
+ * @param error error number that occured.
+ */
+void abort_handler_s(const char *msg, void *ptr, errno_t error);
+
+/**
+ * Return without performing any action.
+ * @param msg Description of the error.
+ * @param ptr Pointer to error details.
+ * @param error error number that occured.
+ */
+void ignore_handler_s(const char *msg, void *ptr, errno_t error);
 
 #endif /* __INCLUDE_STDLIB_H_ */
 

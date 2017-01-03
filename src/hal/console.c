@@ -531,7 +531,7 @@ int console_write(char value){
 char console_read(){
 	console_setcursor(-1, -1);
 	char ch = keyboard_get_key() & 0xFF;
-	if(isprint(ch)){
+	if(isprint(ch) || isspace(ch)){
 		console_write(ch);
 		console_setcursor(-1, -1);
 	}else if(ch == '\b'){

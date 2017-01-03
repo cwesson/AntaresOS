@@ -121,25 +121,25 @@ int kmain(const struct multiboot_info *const mbd, unsigned int magic){
 	while(1){
 		puts("\e[0m> ");
 		console_desc.flush();
-		gets((char*)&str);
-		if(!strcmp((char*)&str, "cmd")){
+		gets_s(str, sizeof(str));
+		if(!strcmp(str, "cmd")){
 			puts(commands);
-		}else if(!strcmp((char*)&str, "cpuid")){
+		}else if(!strcmp(str, "cpuid")){
 			cpuid_run();
-		}else if(!strcmp((char*)&str, "date")){
+		}else if(!strcmp(str, "date")){
 			date_print();
-		}else if(!strcmp((char*)&str, "memmap")){
+		}else if(!strcmp(str, "memmap")){
 			memmap_print();
-		}else if(!strcmp((char*)&str, "pciscan")){
+		}else if(!strcmp(str, "pciscan")){
 			pciscan_run();
-		}else if(!strcmp((char*)&str, "rand")){
+		}else if(!strcmp(str, "rand")){
 			putint(rand());
 			putchar('\n');
-		}else if(!strcmp((char*)&str, "shutdown")){
+		}else if(!strcmp(str, "shutdown")){
 			break;
-		}else if(strcmp((char*)&str, "")){
+		}else if(strcmp(str, "")){
 			perror("\e[31;40mUnkown Command: ");
-			perror((char*)&str);
+			perror(str);
 			perror("\e[0m\n");
 		}
 	}

@@ -15,10 +15,7 @@
 #include "hal/console.h"
 #include "dev/vga.h"
 #include "dev/keyboard.h"
-
-enum {
-	MAX_LENGTH = 255    //!< Maximum string length.
-};
+#include "constraint.h"
 
 device_descriptor *stdout = &console_desc;
 device_descriptor *stderr = &console_desc;
@@ -385,9 +382,14 @@ unsigned char getchar(){
 /**
  * Reads a string from stdin.
  * @param str Buffer to store the string to.
+ * @param n Size of buffer str.
  * @return str if successful, NULL otherwise.
  */
-char *gets(char *str){
+char *gets_s(char *str, rsize_t n){
+	if(n == 0 || n > RSIZE_MAX || str == NULL){
+		__constraint("get_s failed", EFAULT);
+		return NULL;
+	}
 	// Build input string
 	unsigned int loc = 0;
 	unsigned char ch = 0;
@@ -399,12 +401,11 @@ char *gets(char *str){
 			}
 		}else if(ch == '\t'){
 			// Do nothing, for now.
-		}else if(ch && loc < MAX_LENGTH-1 && ch != '\n'){
+		}else if(ch && loc < n-1 && ch != '\n'){
 			str[loc] = ch;
 			++loc;
 		}
 	}
-	putchar('\n');
 	str[loc] = 0;
 	return str;
 }

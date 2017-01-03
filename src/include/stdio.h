@@ -7,6 +7,7 @@
 #ifndef __INCLUDE_STDIO_H_
 #define __INCLUDE_STDIO_H_
 
+#include <stddef.h>
 #include <stdint.h>
 #include "hal/device.h"
 
@@ -121,9 +122,10 @@ unsigned char getchar();
 /**
  * Reads a string from stdin.
  * @param str Buffer to store the string to.
+ * @param n Size of buffer str.
  * @return str if successful, NULL otherwise.
  */
-char *gets(char *);
+char *gets_s(char *str, rsize_t n);
 
 #endif
 

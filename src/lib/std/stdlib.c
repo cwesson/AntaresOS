@@ -9,8 +9,10 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <kernel/panic.h>
 #include "dev/ram.h"
 #include "hal/rand.h"
+#include "constraint.h"
 
 typedef uint32_t HEAP_T;               //!< Integer type to use for heap allocations.
 const uint8_t HEAP_HEAD_SIZE = 2;              //!< Number of HEAP_T's in the header.
@@ -147,5 +149,38 @@ int rand(){
  */
 void srand(unsigned int val){
 	rand_desc.swrite((char)val);
+}
+
+/**
+ * Set the constraint handler function.
+ * @param handler New constraint callback function.
+ * @return Old constraint callback function.
+ */
+constraint_handler_t set_constraint_handler_s(constraint_handler_t handler){
+	return __set_constraint_handler_s_actual(handler);
+}
+
+/**
+ * Aborts execution of the program.
+ * @param msg Description of the error.
+ * @param ptr Pointer to error details.
+ * @param error error number that occured.
+ */
+void abort_handler_s(const char *restrict msg, void *restrict ptr, errno_t error){
+	(void)ptr;
+	(void)error;
+	panic(msg);
+}
+
+/**
+ * Return without performing any action.
+ * @param msg Description of the error.
+ * @param ptr Pointer to error details.
+ * @param error error number that occured.
+ */
+void ignore_handler_s(const char *restrict msg, void *restrict ptr, errno_t error){
+	(void)msg;
+	(void)ptr;
+	(void)error;
 }
 
