@@ -56,6 +56,13 @@ void srand(unsigned int val);
  */
 typedef void (*constraint_handler_t)(const char *msg, void *ptr, errno_t error);
 
+//! Constraint error details.
+typedef struct {
+	const char *file;   //!< File where the constraint occured
+	const char *func;   //!< Function where the constraint occured
+	unsigned int line;  //!< Line number where the constraint occured
+} constraint_ptr_t;
+
 /**
  * Set the constraint handler function.
  * @param handler New constraint callback function.

@@ -386,10 +386,8 @@ unsigned char getchar(){
  * @return str if successful, NULL otherwise.
  */
 char *gets_s(char *str, rsize_t n){
-	if(n == 0 || n > RSIZE_MAX || str == NULL){
-		__constraint("get_s failed", EFAULT);
-		return NULL;
-	}
+	constraint((n > 0 && n <= RSIZE_MAX), EFAULT, NULL);
+	constraint((str != NULL), EFAULT, NULL);
 	// Build input string
 	unsigned int loc = 0;
 	unsigned char ch = 0;
