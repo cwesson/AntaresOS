@@ -1,10 +1,12 @@
 #!/bin/bash
 
 LIST=$@
-FORMAT="%-10s %-40s %8s %-.19s\n"
-CHECKSUMOUT="bin/AntaresOS.sha1"
+FORMAT1="%-10s    %-40s\n"
+FORMAT2="          %8sB    %-.19s\n"
+CHECKSUMOUT="bin/AntaresOS.sha3"
 
-printf "$FORMAT" "Filename" "SHA1 Sum" "Size" "Timestamp"
+printf "$FORMAT1" "Filename" "SHA3-256 Sum"
+printf "$FORMAT2" "Size" "Timestamp"
 echo --------------------------------------------------------------------------------
 
 if [ -e $CHECKSUMOUT ] ; then
@@ -12,10 +14,11 @@ if [ -e $CHECKSUMOUT ] ; then
 fi
 
 for FILE in $LIST; do
-	SUM=`sha1sum $FILE | cut -d ' ' -f 1`
+	SUM=`sha3sum -a256 $FILE | cut -d ' ' -f 1`
 	SIZE=`du -b $FILE | cut -f 1`
 	TIME=`stat -c %y $FILE`
-	printf "$FORMAT" $(basename $FILE) $SUM $SIZE "$TIME"
+	printf "$FORMAT1" $(basename $FILE) $SUM
+	printf "$FORMAT2" $SIZE "$TIME"
 	echo $SUM $(basename $FILE) >> $CHECKSUMOUT
 
 	java -jar scripts/Vash.jar -a 1.1 -f $FILE -w 512 -h 512 -o $FILE.vash.png
