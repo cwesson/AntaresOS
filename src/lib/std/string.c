@@ -177,7 +177,7 @@ char *strcat(char *restrict dest, const char *restrict src){
  * @return Negative if s1 < s2, 0 if s1 == s2, positive if s1 > s2.
  */
 int strcmp(const char *s1, const char *s2){
-	while(*s1){
+	while(*s1 || *s2){
 		if(*s1 != *s2){
 			return *s1 - *s2;
 		}
