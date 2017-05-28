@@ -30,7 +30,15 @@ void sighandler_exit(int signal){
  * Default ignore signal handler.
  * @param signal Signal invoking handler.
  */
-void sighandler_ignore(int signal){
+void SIG_IGN(int signal){
+	(void)signal;
+}
+
+/**
+ * Default hold signal handler.
+ * @param signal Signal invoking handler.
+ */
+void SIG_HOLD(int signal){
 	(void)signal;
 }
 
@@ -54,12 +62,12 @@ void sighandler_cont(int signal){
  * Default signal handler.
  * @param signal Signal invoking handler.
  */
-void sighandler_default(int signal){
+void SIG_DFL(int signal){
 	switch(signal){
 		case SIGNULL:
 		case SIGCHLD:
 		case SIGURG:
-			sighandler_ignore(signal);
+			SIG_IGN(signal);
 			break;
 		case SIGABRT:
 		case SIGFPE:
@@ -96,52 +104,54 @@ void sighandler_default(int signal){
 			sighandler_stop(signal);
 			break;
 		default:
-			sighandler_ignore(signal);
+			SIG_IGN(signal);
 			break;
 	}
 }
 
 //! Signal handlers
 static void (*sighandler[SIGRTMAX+1])(int) = {
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
-	sighandler_default,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
+	SIG_DFL,
 };
+
+static sigset_t sigmask = 0;
 
 /**
  * Raise a signal.
@@ -149,17 +159,55 @@ static void (*sighandler[SIGRTMAX+1])(int) = {
  * @return Zero is successful, SIG_ERR otherwise.
  */
 int raise(int signal){
-	sighandler[signal](signal);
+	if(!sigismember(&sigmask, signal)){
+		sighandler[signal](signal);
+	}
 	return EOK;
 }
 
 /**
  * Set signal handler for the given signal.
  * @param signal Signal to handle.
- * @param handler New handler function
+ * @param handler New handler function.
+ * @return Previous signal handler.
  */
-void signal(int sig, void (*handler)(int)){
-	sighandler[sig] = handler;
+void (*signal(int sig, void (*handler)(int)))(int){
+	void (*old)(int) = sighandler[sig];
+	if(handler == SIG_HOLD){
+		sighold(sig);
+	}else{
+		sighandler[sig] = handler;
+		
+		if(sigismember(&sigmask, sig)){
+			old = SIG_HOLD;
+			sigrelse(sig);
+		}
+	}
+	return old;
+}
+
+/**
+ * Request that signal be held.
+ * @param sig Signal to handle.
+ */
+void sighold(int sig){
+	sigaddset(&sigmask, sig);
+}
+
+/**
+ * Request that signal no longer be held.
+ * @param sig Signal to handle.
+ */
+void sigrelse(int sig){
+	sigdelset(&sigmask, sig);
+}
+
+/**
+ * Request that signal be ignored.
+ * @param signal Signal to handle.
+ */
+void sigignore(int sig){
+	signal(sig, SIG_IGN);
 }
 
 /**
@@ -210,5 +258,15 @@ int sigemptyset(sigset_t* set){
 int sigfillset(sigset_t* set){
 	*set = -1;
 	return EOK;
+}
+
+/**
+ * Checks if the signal is in the set.
+ * @param set Set to check.
+ * @param signal Signal to check.
+ * @return 1 is signal is set, 0 otherwise.
+ */
+int sigismember(const sigset_t *set, int signal){
+	return !!(*set & (1 << (signal-1)));
 }
 

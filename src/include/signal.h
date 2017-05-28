@@ -93,27 +93,26 @@ enum {
 };
 
 /**
- * Request for default signal handling.
- * @param signal Signal to handle.
+ * Default signal handler.
+ * @param signal Signal invoking handler.
  */
 void SIG_DFL(int signal);
 
-//! Return value from signal() in case of error.
-enum {
-	SIG_ERR = -1
-};
+/**
+ * Default signal ignore handler.
+ * @param signal Signal invoking handler.
+ */
+void SIG_IGN(int signal);
 
 /**
- * Request that signal be held.
- * @param signal Signal to handle.
+ * Default signal hold handler.
+ * @param signal Signal invoking handler.
  */
 void SIG_HOLD(int signal);
 
-/**
- * Request that signal be ignored.
- * @param signal Signal to handle.
- */
-void SIG_IGN(int signal);
+enum {
+	SIG_ERR  = -1, //!< Return value from signal() in case of error.
+};
 
 typedef int sig_atomic_t;
 typedef unsigned long long sigset_t;
@@ -166,9 +165,31 @@ int raise(int signal);
 /**
  * Set signal handler for the given signal.
  * @param sig Signal to handle.
- * @param handler New handler function
+ * @param handler New handler function.
+ * @return Previous signal handler.
  */
-void signal(int sig, void (*handler)(int));
+void (*signal(int sig, void (*handler)(int)))(int);
+inline void (*sigset(int sig, void (*handler)(int)))(int){
+	return signal(sig, handler);
+}
+
+/**
+ * Request that signal be held.
+ * @param sig Signal to handle.
+ */
+void sighold(int sig);
+
+/**
+ * Request that signal no longer be held.
+ * @param sig Signal to handle.
+ */
+void sigrelse(int sig);
+
+/**
+ * Request that signal be ignored.
+ * @param sig Signal to handle.
+ */
+void sigignore(int sig);
 
 /**
  * Add a signal to the set.
@@ -199,6 +220,14 @@ int sigemptyset(sigset_t* set);
  * @return Zero is successful, SIG_ERR otherwise.
  */
 int sigfillset(sigset_t* set);
+
+/**
+ * Checks if the signal is in the set.
+ * @param set Set to check.
+ * @param signal Signal to check.
+ * @return 1 is signal is set, 0 otherwise.
+ */
+int sigismember(const sigset_t *set, int signal);
 
 #endif
 
