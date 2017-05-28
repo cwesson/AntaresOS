@@ -47,9 +47,9 @@ void ram_dump(uint8_t *addr){
 	addr = (uint8_t*)((uint32_t)addr & 0xFFFFFFF0);
 	uint8_t *end = addr + 256;
 	for(; addr < end; addr+=16){
-		printf("\e[1;37;44m 0x%8X  ", (uint32_t)addr);
+		printf("\e[1;37;44m 0x%08X  ", (uint32_t)addr);
 		for(int i = 0; i < 16; ++i){
-			printf("%2X ", *(addr+i));
+			printf("%02X ", *(addr+i));
 		}
 		puts("  ");
 		for(int i = 0; i < 16; ++i){

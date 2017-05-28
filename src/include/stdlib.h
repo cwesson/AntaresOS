@@ -49,6 +49,11 @@ int rand();
 void srand(unsigned int val);
 
 /**
+ * Causes abnormal program termination.
+ */
+void abort();
+
+/**
  * Constraint handler callback function.
  * @param msg Description of the error.
  * @param ptr Pointer to error details.

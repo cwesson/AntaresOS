@@ -7,9 +7,9 @@
 #include "stdlib.h"
 
 #include <errno.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdint.h>
-#include <kernel/panic.h>
 #include "dev/ram.h"
 #include "hal/rand.h"
 #include "constraint.h"
@@ -152,6 +152,13 @@ void srand(unsigned int val){
 }
 
 /**
+ * Causes abnormal program termination.
+ */
+void abort(){
+	raise(SIGABRT);
+}
+
+/**
  * Set the constraint handler function.
  * @param handler New constraint callback function.
  * @return Old constraint callback function.
@@ -167,9 +174,10 @@ constraint_handler_t set_constraint_handler_s(constraint_handler_t handler){
  * @param error error number that occured.
  */
 void abort_handler_s(const char *restrict msg, void *restrict ptr, errno_t error){
+	(void)msg;
 	(void)ptr;
 	(void)error;
-	panic(msg);
+	abort();
 }
 
 /**

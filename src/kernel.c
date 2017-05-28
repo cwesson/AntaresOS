@@ -115,6 +115,8 @@ int kmain(const struct multiboot_info *const mbd, unsigned int magic){
 	
 	memmap_print();
 	
+	set_constraint_handler_s(abort_handler_s);
+	
 	// Begin interactive shell.
 	puts("Beginning Shell\n");
 	char str[100];
