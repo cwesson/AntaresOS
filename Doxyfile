@@ -2280,7 +2280,7 @@ DOTFILE_DIRS           =
 # contain msc files that are included in the documentation (see the \mscfile
 # command).
 
-MSCFILE_DIRS           =
+MSCFILE_DIRS           = doc/
 
 # The DIAFILE_DIRS tag can be used to specify one or more directories that
 # contain dia files that are included in the documentation (see the \diafile

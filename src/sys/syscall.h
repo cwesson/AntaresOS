@@ -40,6 +40,7 @@ typedef void (*sys_func)(syscall_payload*);
  * @param num System call number.
  * @param payload System call specfic information.
  * @return System call specific return data.
+ * @mscfile syscall.msc
  */
 syscall_payload *syscall(int num, syscall_payload *payload);
 

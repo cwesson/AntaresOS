@@ -1,0 +1,25 @@
+# Sequence for a puts() syscall
+msc {
+	# Modules in user space
+	app [label="Application"],
+	stdio,syscall,
+	# Modules in kernal space
+	int [label="Interrupt Handler",textbgcolor="red",linecolor="red"],
+	console [textbgcolor="red",linecolor="red"],
+	vga [textbgcolor="red",linecolor="red"];
+	
+	app=>stdio [label="puts(str)"];
+	stdio=>syscall [label="syscall"];
+	syscall=>int [label="int 0x80"];
+	# Enter kernal space
+	int=>console [label="swrite(ch)"];
+	console=>vga [label="bwrite(addr, ch)"];
+	vga>>console [label="EOK"];
+	console>>int [label="EOK"];
+	int=>int [label="foreach ch"];
+	# Exit kernal space
+	int>>syscall [label="EOK"];
+	syscall>>stdio [label="EOK"];
+	stdio>>app [label="EOK"];
+}
+
