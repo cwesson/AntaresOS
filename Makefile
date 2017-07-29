@@ -5,12 +5,24 @@ SHELL := /bin/bash
 TIMESTAMP := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 REVISION := $(shell git rev-parse --short HEAD)$(if $(shell git diff --exit-code),"M",)
 
-CC := gcc
+CC ?= gcc
+ifeq ($(CC), cc)
+	CC := gcc
+endif
+
+ifeq ($(CC), gcc)
 CWARN := -Wall -Wextra -Wunused -Werror -Wformat -Wswitch-default -Wswitch-enum -Wuninitialized \
 	-Wshadow -Wpointer-arith -Wcast-align -Wdate-time -Wlogical-op -Wredundant-decls \
 	-Wnested-externs -Winline -Wvolatile-register-var -Woverlength-strings
 CFLAGS := $(CWARN) -nostdlib -nostartfiles -nodefaultlibs -nostdinc -fno-builtin -std=gnu11 -m32 \
-	-DREVISION=\"$(REVISION)\" -I./src/include/ -iquote./src/
+	-fms-extensions -DREVISION=\"$(REVISION)\" -I./src/include/ -iquote./src/
+else ifeq ($(CC), clang)
+CWARN := -Wall -Wextra -Wunused -Wformat -Wswitch-default -Wswitch-enum -Wuninitialized \
+	-Wshadow -Wpointer-arith -Wcast-align -Wdate-time -Wredundant-decls \
+	-Wnested-externs -Winline -Wvolatile-register-var -Woverlength-strings -Wno-microsoft
+CFLAGS := $(CWARN) -nostdlib -nodefaultlibs -nostdinc -fno-builtin -std=gnu11 -m32 \
+	-fms-extensions -DREVISION=\"$(REVISION)\" -I./src/include/ -iquote./src/
+endif
 
 ASM := nasm
 AFLAGS := -f elf

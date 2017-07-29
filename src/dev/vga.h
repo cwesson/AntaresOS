@@ -5,7 +5,7 @@
  */
 
 #ifndef __DEV_VGA_H_
-#define __DEV_VGA_H__
+#define __DEV_VGA_H_
 
 #include <errno.h>
 
