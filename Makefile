@@ -101,13 +101,18 @@ $(BOOTCD): $(KERNEL)
 	@$(ISO) $(ISOFLAGS) -o $@ bin/isofiles
 	@scripts/validate $(KERNEL) $(BOOTCD)
 
+qemu: all
+	qemu-system-x86_64 -boot d -cdrom $(BOOTCD) -soundhw pcspk -m 512 -smp 4
+
 .NOTPARALLEL:
 
 clean:
 	@echo " CLEAN  *.log"
 	@rm -f *.log
-	@echo " CLEAN  *.o *.a"
+	@echo " CLEAN  *.o"
 	@rm -f $(OBJS) $(LIBBINS) $(LIBS)
+	@echo " CLEAN  *.a"
+	@rm -f $(LIBS)
 
 realclean: clean
 	@echo " CLEAN  bin/"

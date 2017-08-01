@@ -199,15 +199,11 @@ static void console_clearln(enum clear_amount amount){
  */
 static void console_scroll(int8_t amount){
 	if(amount > 0){
-		int b = 0;
-		int a = 0;
 		for(int i = 0; i <= VPOS(VCOL_MAX, VROW_MAX); ++i){
 			if(i <= VPOS(VCOL_MAX, VROW_MAX-amount)){
 				vga_desc.bwrite(i, vga_desc.bread(i + (VCOLS*amount)));
-				++b;
 			}else{
 				vga_desc.bwrite(i, VBLANK);
-				++a;
 			}
 		}
 		console_setcursor(0, VROW_MAX);

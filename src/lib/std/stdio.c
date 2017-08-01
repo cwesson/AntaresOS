@@ -154,7 +154,6 @@ int puts(const char *str){
  * @return Number of characters written if successful, EOF otherwise.
  */
 int printf(const char *format, ...){
-	int index = 0;
 	unsigned int count = 0;
 	va_list ap;
 	va_start(ap, format);
@@ -260,7 +259,6 @@ int printf(const char *format, ...){
 				}else if(type == '.'){
 					dot = true;
 				}
-				++index;
 			}
 			if(left && lastcount + width < count){
 				for(unsigned int s = 0; s < lastcount + width; ++s){

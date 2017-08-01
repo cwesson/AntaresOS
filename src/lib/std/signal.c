@@ -219,7 +219,7 @@ void sigignore(int sig){
 int sigaddset(sigset_t* set, int signal){
 	int ret = SIG_ERR;
 	if(signal > SIGNULL && signal <= SIGRTMAX){
-		*set |= (1 << (signal-1));
+		*set |= (1ull << (signal-1));
 		ret = EOK;
 	}
 	return ret;
@@ -234,7 +234,7 @@ int sigaddset(sigset_t* set, int signal){
 int sigdelset(sigset_t* set, int signal){
 	int ret = SIG_ERR;
 	if(signal > SIGNULL && signal <= SIGRTMAX){
-		*set &= ~(1 << (signal-1));
+		*set &= ~(1ull << (signal-1));
 		ret = EOK;
 	}
 	return ret;
@@ -267,6 +267,6 @@ int sigfillset(sigset_t* set){
  * @return 1 is signal is set, 0 otherwise.
  */
 int sigismember(const sigset_t *set, int signal){
-	return !!(*set & (1 << (signal-1)));
+	return !!(*set & (1ull << (signal-1)));
 }
 
