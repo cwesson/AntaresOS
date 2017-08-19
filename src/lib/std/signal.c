@@ -1,5 +1,5 @@
 /**
- * @file include/signal.c
+ * @file signal.c
  * Standard signal definitions.
  * @author Conlan Wesson
  */
@@ -204,7 +204,7 @@ void sigrelse(int sig){
 
 /**
  * Request that signal be ignored.
- * @param signal Signal to handle.
+ * @param sig Signal to handle.
  */
 void sigignore(int sig){
 	signal(sig, SIG_IGN);

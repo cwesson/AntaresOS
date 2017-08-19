@@ -1,5 +1,5 @@
 /**
- * @file include/constraint.c
+ * @file constraint.c
  * Internal constraint functions.
  * @author Conlan Wesson
  */

@@ -83,7 +83,7 @@ $(LIBS): $(LIBBINS)
 doc:
 	@echo " DOC    Doxyfile"
 	@rm -rf doc/html/
-	@doxygen Doxyfile
+	@doxygen Doxyfile 2> >(tee doxygen.log)
 
 lint:
 	@echo " LINT   "
@@ -110,7 +110,7 @@ clean:
 	@echo " CLEAN  *.log"
 	@rm -f *.log
 	@echo " CLEAN  *.o"
-	@rm -f $(OBJS) $(LIBBINS) $(LIBS)
+	@rm -f $(OBJS) $(LIBBINS)
 	@echo " CLEAN  *.a"
 	@rm -f $(LIBS)
 

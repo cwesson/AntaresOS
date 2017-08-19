@@ -1,5 +1,5 @@
 /**
- * @file include/limit.h
+ * @file include/limits.h
  * Standard limits definitions.
  * @author Conlan Wesson
  */
